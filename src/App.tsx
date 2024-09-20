@@ -8,7 +8,7 @@ import Header from './components/Header';
 // import ProtectedRoutes from './components/ProtectedRoutes';
 
 // Importer les pages
-import Home from './pages/Home';
+// import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 
