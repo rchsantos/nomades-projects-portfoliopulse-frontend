@@ -1,32 +1,27 @@
-// Imports principaux de l'application
+// Import the necessary libraries
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './App.css';
 
-// Importer les composants
+// Import the components
 import Header from './components/Header';
-// import ProtectedRoutes from './components/ProtectedRoutes';
 
-// Importer les pages
-// import Home from './pages/Home';
-import Login from './pages/Login';
+// Import the pages
 import Register from './pages/Register';
-
-// Importer le contexte
-import { AuthProvider } from './context/AuthContext';
+import Login from './pages/Login';
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
+    <Router>
+      <div className="App">
         <Header />
         <Routes>
           <Route path="/" element={<h1>Bienvenue sur PortfolioPulse</h1>} />
-          <Route path='/login' element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
         </Routes>
-      </Router>
-    </AuthProvider>
+      </div>
+    </Router>
   );
 }
 
