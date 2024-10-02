@@ -8,7 +8,7 @@ const Header: React.FC = () => {
         <div className='container mx-auto px-6 py-2 lg:px-8'>
           <nav className='flex flex-row px-6 lg:px-8 justify-between'>
             <a href="/" className="flex items-center">
-              <img className='mx-auto p-3 h-12 w-auto' src='https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg?color=indigo=600' alt='PortfolioPulse Logo ' />
+              <img className='mx-auto p-3 h-12 w-auto' src='https://logoipsum.com/artwork/317' alt='PortfolioPulse Logo ' />
                 <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">PortfolioPulse</span>
             </a>
             <div className="flex flex-wrap items-center max-w-screen-xl"> 

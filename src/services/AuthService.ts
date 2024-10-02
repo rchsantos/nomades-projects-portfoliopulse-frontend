@@ -39,7 +39,7 @@ export async function register(data: RegisterData): Promise<RegisterResponse> {
 }
 
 export interface LoginData {
-  email: string;
+  username: string;
   password: string;
 }
 

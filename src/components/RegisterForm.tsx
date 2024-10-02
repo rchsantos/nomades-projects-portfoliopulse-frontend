@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { register, RegisterData } from '../services/AuthService';
 
 const RegisterForm: React.FC = () => {
@@ -9,6 +10,8 @@ const RegisterForm: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
+  const navigate = useNavigate();
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     setError(null);
@@ -16,6 +19,7 @@ const RegisterForm: React.FC = () => {
 
     try {
       const response = await register({ username, email, password, fullName: fullName || undefined } as RegisterData);
+      if (response) navigate('/login');
       setSuccess('Account created successfully');
     }
     catch (error: any) {

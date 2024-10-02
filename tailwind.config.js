@@ -29,6 +29,7 @@ module.exports = {
         800: '#2d3748',
         900: '#1a202c',
       },
+      'neutral-strongest': '#1A202C',
       'global-color-primary': '#00FFC4',
       'global-color-secondary': '#00AF78',
       'global-color-accent': '#00AF78',
