@@ -9,6 +9,7 @@ import Header from './components/Header';
 // Import the pages
 import Register from './pages/Register';
 import Login from './pages/Login';
+import Portfolio from './pages/Portfolio';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function Main() {
         {!hideHeader && <Header />}
         <Routes>
           <Route path="/" element={<h1>Bienvenue sur PortfolioPulse</h1>} />
+          <Route path="/portfolios" element={<Portfolio />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
         </Routes>

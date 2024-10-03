@@ -18,13 +18,13 @@ const LoginForm: React.FC = () => {
 
     try {
       const response = await login({ username, password } as LoginData);
-      localStorage.setItem('accessToken', response.accessToken);
-      localStorage.setItem('refreshToken', response.refreshToken);
+      localStorage.setItem('accessToken', response.access_token);
+      localStorage.setItem('refreshToken', response.token_type);
+      localStorage.setItem('user', JSON.stringify({username}));
       console.log('Login successful');
       setSuccess('Login successful');
       navigate('/');
-    }
-    catch (error: any) {
+    } catch (error: any) {
       console.error('Login failed', error);
       setError(error.message || 'Login failed. Please try again');
     }

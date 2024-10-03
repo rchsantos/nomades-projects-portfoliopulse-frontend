@@ -44,8 +44,8 @@ export interface LoginData {
 }
 
 export interface AuthResponse {
-  accessToken: string;
-  refreshToken: string;
+  access_token: string;
+  token_type: string;
 }
 
 export async function login(data: LoginData): Promise<AuthResponse> {
