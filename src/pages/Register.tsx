@@ -1,70 +1,42 @@
-import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
-
-import BaseContainer from '../components/BaseContainer';
+import React from 'react';
+import RegisterForm from '../components/RegisterForm';
+import { Link } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
 const Register: React.FC = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const { register } = useAuth();
-    const navigate = useNavigate();
-    const [error, setError] = useState<string | null>(null);
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        try {
-            await register(email, password);
-            navigate('/login');
-        } catch (error) {
-            console.error( 'Registration failed', error );
-        }
-    };
-
     return (
-        <BaseContainer>
-            <div className="col-span-12 sm:col-span-8 md:col-span-6 lg:col-span-4 mx-auto bg-white p-8 rounded shadow-md">
-                <h1 className="text-3xl font-bold mb-6 text-center">Inscription</h1>
-
-                {error && (
-                <div className="bg-red-100 text-red-600 p-3 rounded mb-4">
-                    {error}
-                </div>
-                )}
-
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="form-group">
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
-                            Email
-                        </label>
-                        <input 
-                            type="email"
-                            placeholder="Email"
-                            className="w-full px-4 py-2 border rounded-lg text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}   
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
-                            Mot de passe
-                        </label>
-                        <input 
-                            type="password"
-                            placeholder='Mot de passe'
-                            className="w-full px-4 py-2 border rounded-lg text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                        />
-                    </div>
-                    <button
-                        type="submit"
-                        className="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-700">
-                            S'inscrire
-                    </button>
-                </form>
+        <div className="min-h-screen flex items-center justify-center">
+            <div className="flex flex-col flex-1 items-center justify-center min-h-screen sm:w-2 bg-neutral-strongest">
+            <div className='hidden pt-5 lg:flex lg:flex-1 lg:justify-end'>
+                <Link to={'/'} className=' text-white'>
+                    <FontAwesomeIcon icon={faArrowLeft} className='mr-2 text-white' />
+                    <span>Go back to</span>
+                </Link>
             </div>
-        </BaseContainer>
+            <div className='lg:flex-col lg:flex-1'>
+                <div className='h-9'>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" fill="none" viewBox="0 0 176 40"><path fill="#00FFC4" fillRule="evenodd" d="M15 28a5 5 0 0 1-5-5V0H0v23c0 8.284 6.716 15 15 15h11V28H15ZM45 10a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm-19 9C26 8.507 34.507 0 45 0s19 8.507 19 19-8.507 19-19 19-19-8.507-19-19ZM153 10a9 9 0 0 0-9 9 9 9 0 0 0 9 9 9 9 0 0 0 9-9 9 9 0 0 0-9-9Zm-19 9c0-10.493 8.507-19 19-19s19 8.507 19 19-8.507 19-19 19-19-8.507-19-19ZM85 0C74.507 0 66 8.507 66 19s8.507 19 19 19h28c1.969 0 3.868-.3 5.654-.856L124 40l5.768-10.804A19.007 19.007 0 0 0 132 20.261V19c0-10.493-8.507-19-19-19H85Zm37 19a9 9 0 0 0-9-9H85a9 9 0 1 0 0 18h28a9 9 0 0 0 9-8.93V19Z" clipRule="evenodd"></path><path fill="#283841" d="M176 2.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z"></path></svg>
+                </div>
+                <h2 className='mt-6 text-center text-3xl font-extrabold text-white'>
+                    Welcome to your Trading Platform ! 🚀
+                </h2>
+                    <h3 className='mt-6 text-center text-2xl font-bold text-gray-600'>
+                        All you need to do is to register to start trading
+                    </h3>
+                </div>
+            </div>
+
+            <div className="flex flex-col flex-1 items-center justify-center min-h-screen sm:w-">
+                <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+                    <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+                        Create your account
+                    </h2>
+                    <RegisterForm />
+                </div>
+            </div>
+
+        </div>
     )
 };
 

@@ -1,62 +1,70 @@
-import { User } from '../models/User';
+const API_URL = process.env.REACT_APP_API_URL;
+console.log('API_URL:', API_URL);
 
-// URL de base of API getted from .env
-const BASE_URL_API = process.env.REACT_APP_BASE_URL_API;
-
-export interface LoginResponse {
-  token: string;
-  user: User;
+export interface RegisterData {
+  username: string;
+  email: string;
+  password: string;
+  fullName?: string;
 }
 
-// Fonction pour la connexion
-export const login = async (email: string, password: string): Promise<LoginResponse> => {
-  const response = await fetch(`${BASE_URL_API}/auth/login`, {
+export interface RegisterResponse {
+  accessToken: string;
+  refreshToken: string;
+}
+
+export async function register(data: RegisterData): Promise<RegisterResponse> {
+
+  const response = await fetch(
+    `${API_URL}/register`, 
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+  });
+
+  console.log('Data: ', data);
+
+  console.log('Response:', response);
+
+  if (!response.ok) {
+    const message = await response.json();
+    console.error('Resposne:', message);
+    throw new Error(message.detail ||'Registration failed');
+  }
+
+  return await response.json();
+}
+
+export interface LoginData {
+  username: string;
+  password: string;
+}
+
+export interface AuthResponse {
+  access_token: string;
+  token_type: string;
+}
+
+export async function login(data: LoginData): Promise<AuthResponse> {
+
+  console.log('Data:', data);
+
+  const response = await fetch(`${API_URL}/login`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
+      'content-type' : 'application/json',
     },
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify(data),
   });
 
   if (!response.ok) {
-    throw new Error('Login failed');
+    const message = await response.json();
+    throw new Error(message.detail || 'Login failed');
   }
 
-  const data = await response.json();
-  return data;
-};
+  return await response.json();
 
-// Fonction pour l'inscription
-export const register = async (email: string, password: string): Promise<User> => {
-  const response = await fetch(`${BASE_URL_API}/auth/register`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ email, password }),
-  });
-
-  if (!response.ok) {
-    throw new Error('Registration failed');
-  }
-
-  const data = await response.json();
-  return data.user;
-};
-
-// Fonction pour récupérer le profil utilisateur
-export const getUserProfile = async (): Promise<User> => {
-  const response = await fetch(`${BASE_URL_API}/auth/profile`, {
-    method: 'GET',
-    headers: {
-      'Authorization': `Bearer ${localStorage.getItem('token')}`,
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error('Failed to fetch user profile');
-  }
-
-  const data = await response.json();
-  return data;
-};
+}
