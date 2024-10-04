@@ -4,12 +4,15 @@ import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-route
 import './App.css';
 
 // Import the components
-import Header from './components/Header';
+import Header from './components/organisms/Header';
+import Footer from './components/organisms/Footer';
 
 // Import the pages
-import Register from './pages/Register';
-import Login from './pages/Login';
-import Portfolio from './pages/Portfolio';
+import HomePage from './pages/Homepage';
+import Register from './pages/Auth/Register';
+import Login from './pages/Auth/Login';
+import Portfolios from './pages/Portfolio/Portfolio';
+import PortfolioDetails from './pages/Portfolio/PortfolioDetails';
 
 function App() {
   return (
@@ -21,17 +24,19 @@ function App() {
 
 function Main() {
   const location = useLocation();
-  const hideHeader = location.pathname === '/login' || location.pathname === '/register';
+  const hideElements = location.pathname === '/login' || location.pathname === '/register';
 
   return (
     <div className="App">
-        {!hideHeader && <Header />}
+        {!hideElements && <Header />}
         <Routes>
-          <Route path="/" element={<h1>Bienvenue sur PortfolioPulse</h1>} />
-          <Route path="/portfolios" element={<Portfolio />} />
+          <Route path="/" element={<HomePage />} />
+          <Route path="/portfolio" element={<Portfolios />} />
+          <Route path="/portfolio/:portfolioId" element={<PortfolioDetails />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
         </Routes>
+        {!hideElements && <Footer />}
       </div>
   );
 }

@@ -1,5 +1,5 @@
 import { Button } from '@headlessui/react';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 const Header: React.FC = () => {
@@ -32,7 +32,7 @@ const Header: React.FC = () => {
           <div className="flex flex-wrap items-center max-w-screen-xl">
             {isLoggedIn ? (
               <div className='space-x-4 flex items-center lg:order-2'>
-                <Link to="/portfolios" className="text-global-color-secondary py-2 px-4 rounded">
+                <Link to="/portfolio" className="text-global-color-secondary py-2 px-4 rounded">
                   Portfolios
                 </Link>
                 <Button
