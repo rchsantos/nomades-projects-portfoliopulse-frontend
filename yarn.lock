@@ -2663,6 +2663,14 @@
   resolved "https://registry.yarnpkg.com/@xtuc/long/-/long-4.2.2.tgz#d291c6a4e97989b5c61d9acf396ae4fe133a718d"
   integrity sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==
 
+a17t@^0.10.1:
+  version "0.10.1"
+  resolved "https://registry.yarnpkg.com/a17t/-/a17t-0.10.1.tgz#09e774388134d8223bb3db875b4cc9e92ae49e4d"
+  integrity sha512-x5uyU2Au/nY0Miyi2madibSCUsJGu2jt+GNol/Eht9eR+Fa9i1v6fG6UeSvCdU4Oz6teJdZvdxZM0tnq6mHMMw==
+  dependencies:
+    deepmerge "^4.2.2"
+    tailwindcss "^3.0.7"
+
 abab@^2.0.3, abab@^2.0.5:
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/abab/-/abab-2.0.6.tgz#41b80f2c871d19686216b82309231cfd3cb3d291"
@@ -5536,6 +5544,11 @@ ini@^1.3.5:
   version "1.3.8"
   resolved "https://registry.yarnpkg.com/ini/-/ini-1.3.8.tgz#a29da425b48806f34767a4efce397269af28432c"
   integrity sha512-JV/yugV2uzW5iMRSiZAyDtQd+nxtUnjeLt0acNdw98kKLrvuRVyB80tsREOE7yvGVgalhZ6RNXCmEHkUKBKxew==
+
+install@^0.13.0:
+  version "0.13.0"
+  resolved "https://registry.yarnpkg.com/install/-/install-0.13.0.tgz#6af6e9da9dd0987de2ab420f78e60d9c17260776"
+  integrity sha512-zDml/jzr2PKU9I8J/xyZBQn8rPCAY//UOYNmR01XwNwyfhEWObo2SWfSl1+0tm1u6PhxLwDnfsT/6jB7OUxqFA==
 
 internal-slot@^1.0.4, internal-slot@^1.0.7:
   version "1.0.7"
@@ -9199,7 +9212,7 @@ tabbable@^6.0.0:
   resolved "https://registry.yarnpkg.com/tabbable/-/tabbable-6.2.0.tgz#732fb62bc0175cfcec257330be187dcfba1f3b97"
   integrity sha512-Cat63mxsVJlzYvN51JmVXIgNoUokrIaT2zLclCXjRd8boZ0004U4KCs/sToJ75C6sdlByWxpYnb5Boif1VSFew==
 
-tailwindcss@^3.0.2, tailwindcss@^3.4.13:
+tailwindcss@^3.0.2, tailwindcss@^3.0.7, tailwindcss@^3.4.13:
   version "3.4.13"
   resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-3.4.13.tgz#3d11e5510660f99df4f1bfb2d78434666cb8f831"
   integrity sha512-KqjHOJKogOUt5Bs752ykCeiwvi0fKVkr5oqsFNt/8px/tA8scFPIlkygsf6jXrfCqGHz7VflA6+yytWuM+XhFw==

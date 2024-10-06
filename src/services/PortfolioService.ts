@@ -7,8 +7,21 @@ export interface Portfolio {
   strategy: string;
 }
 
+export interface StockDTO {
+  logo: string
+  name: string;
+  symbol: string;
+  quantity: number;
+  purchase_price: number;
+  currency: string;
+  portfolio_id: string;
+  id: string;
+  user_id: string;
+}
+
 export interface Stock {
   id: string;
+  logo: string;
   name: string;
   symbol: string;
   quantity: number;
@@ -76,7 +89,7 @@ export async function createPortfolio(
   return await response.json();
 }
 
-export async function getRelatedStocks(portfolioId: string): Promise<Stock[]> {
+export async function getRelatedStocks(portfolioId: string): Promise<StockDTO[]> {
   const response = await fetch(`${process.env.REACT_APP_API_URL}/portfolio/${portfolioId}/assets`, {
     method: 'GET',
     headers: {
@@ -89,5 +102,19 @@ export async function getRelatedStocks(portfolioId: string): Promise<Stock[]> {
     throw new Error('Failed to fetch stocks');
   }
   
-  return await response.json();
+  const data = await response.json();
+  return data as StockDTO[];
+}
+
+export const transformStockDTO = (stockDTO: StockDTO): Stock => {
+  return {
+    id: stockDTO.id,
+    logo: stockDTO.logo,
+    name: stockDTO.name,
+    symbol: stockDTO.symbol,
+    quantity: stockDTO.quantity,
+    purchasePrice: stockDTO.purchase_price,
+    portfolioId: stockDTO.portfolio_id,
+    userId: stockDTO.user_id,
+  };
 }
