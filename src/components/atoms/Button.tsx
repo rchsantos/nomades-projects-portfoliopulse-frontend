@@ -1,19 +1,22 @@
 import React from 'react';
-import { Button as HeadlessButton } from '@headlessui/react';
 
 interface ButtonProps {
+  label: string;
   onClick: () => void;
-  classProps: string; 
-  children: React.ReactNode;
+  type: 'button' | 'submit';
+  className?: string;
+  children?: React.ReactNode;
 }
 
-const Button: React.FC<ButtonProps> = ({ classProps, onClick, children }) => (
-  <HeadlessButton 
-    className={classProps}
+const Button: React.FC<ButtonProps> = ({ label, onClick, type = 'button', className, children }) => (
+  <button
+    type={type}
     onClick={onClick}
+    className={`px-4 py-2 bg-global-color-primary hover:bg-global-color-primary rounded-md ${className}`}
   >
-    {children}
-  </HeadlessButton>
+    { label }
+    { children }
+  </button>
 );
 
 export default Button;

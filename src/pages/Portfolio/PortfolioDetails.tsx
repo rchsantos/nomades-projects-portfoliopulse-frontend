@@ -1,157 +1,184 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
-import { getPortfolio, getRelatedStocks, Portfolio, Stock, StockDTO, transformStockDTO } from '../../services/PortfolioService';
-import Button from '../../components/atoms/Button';
+import { Link, useParams } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEllipsisVertical, faArrowLeftLong } from '@fortawesome/free-solid-svg-icons';
+// import StockTable, { Stock } from '../../components/organisms/StockTable';
+import { Portfolio, fetchTransactions, Transaction } from '../../services/PortfolioService';
+import {
+  Tabs,
+  TabsHeader,
+  TabsBody,
+  Tab,
+  TabPanel,
+} from '../../components/molecules/Tabs';
+import StockTable, { Stock } from '../../components/organisms/StockTable';
+import TransactionsTable from '../../components/organisms/TransactionsTable';
+import LoadingSpinner from '../../components/atoms/LoadingSpinner';
 
 const PortfolioDetails: React.FC = () => {
-  const { portfolioId } = useParams<{ portfolioId: string }>();
+  // const { portfolioId } = useParams<{ portfolioId: string }>();
   const [portfolio, setPortfolio] = useState<Portfolio | null>(null);
-  const [stocks, setStocks] = useState<Stock[]>([]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [activeTab, setActiveTab] = useState<string>('Holdings');
   const [loading, setLoading] = useState<boolean>(true);
 
+
+  // Mock portfolio
+  const portfolioData: Portfolio = {
+    name: 'Energy Stocks Sector',
+    userId: 'user123',
+    tickers: ['AAPL', 'GOOGL', 'TSLA'].map(ticker => ({
+      id: ticker,
+      name: ticker,
+      symbol: ticker,
+      allocation: 0,
+      purchasePrice: 0,
+      currency: 'USD',
+      portfolioId: '',
+      userId: 'user123',
+      logo: ''
+    })),
+    strategy: 'Growth',
+    currency: 'USD',
+    description: 'A sample portfolio',
+  };
+
   useEffect(() => {
-    async function fetchPortfolio() {
-      try {
-        if (portfolioId) {
-          const portfolioDetails = await getPortfolio(portfolioId);
-          setPortfolio(portfolioDetails);
+      setPortfolio(portfolioData);
 
-          const relatedStocksDTO: StockDTO[] = await getRelatedStocks(portfolioId);
+    // const loadPortfolio = async () => {
+    //   if (portfolioId) {
+    //     const portfolioDetails = await fetchPortfolio(portfolioId);
+    //     setPortfolio(portfolioDetails);
+    //   } else {
+    //     console.error('Portfolio ID is undefined');
+    //   }
+    // };
 
-          const relatedStocks = relatedStocksDTO.map((stockDTO: StockDTO) => transformStockDTO(stockDTO));
+    const portfolioId = 'IgmRIFaEnc855pLEtbDX'
 
-          setStocks(relatedStocks);
-          setLoading(false);
-        } else {
-          console.error('Portfolio ID is undefined');
-          setLoading(false);
-        }
-      } catch (error) {
-        console.error('Failed to fetch portfolio details:', error);
+    const loadTransactions = async () => {
+      if (portfolioId) {
+        const portfolioTransactions = await fetchTransactions(portfolioId);
+        setTransactions(portfolioTransactions);
+        setLoading(false);
+      } else {
+        console.error('Portfolio ID is undefined');
       }
-    }
+    };
 
-    fetchPortfolio();
-  }, [portfolioId]);
+    // loadPortfolio();
+    loadTransactions();
+  }, []);
 
+  const handleEditStock = (stock: Stock) => {
+    // Handle edit stock action (e.g., open edit modal)
+    console.log('Edit stock:', stock);
+  };
+
+  const handleEditTransaction = (transaction: Transaction) => {
+    // Handle edit transaction action (e.g., open edit modal)
+    console.log('Edit transaction:', transaction);
+  };
+    
   if (loading) {
-    return <div className="text-center mt-4">Loading...</div>;
+    return <LoadingSpinner />;
   }
+
 
   if (!portfolio) {
-    return <div className="text-center mt-4">Portfolio not found</div>;
+    return <div>Portfolio not found</div>;
   }
 
-  console.log('Portfolio:', portfolio);
-  console.log('Stocks:', stocks);
+  console.log('Portfolio', portfolio);
+
+  // The total value of the portfolio is calculated by the API and this information is displayed in the Portfolio Overview section.
+  // TODO: Display the total value of the portfolio in the Portfolio Overview section. HERE
 
   return (
-    <div className="container mx-auto px-6 py-8 flex flex-col">
-      <h1 className="text-2xl font-semibold mb-4 self-start">{portfolio?.name}</h1>
-      <TabGroup>
-        <TabList className="flex p-1 space-x-1 bg-blue-900/20 rounded-xl">
-          <Tab as={React.Fragment}>
-            {({ selected }) => (
-              // For the selected tab, we add a border to the bottom with the global color primary
-              <button className={`px-4 py-2 ${selected ? 'border-b-4 border-solid border-global-color-primary px-4 py-2' : 'bg-transparent'}`}>
-                Holdings
-              </button>
-            )}
-          </Tab>
-          <Tab as={React.Fragment}>
-            {({ selected }) => (
-              <button
-                className={`px-4 py-2 ${selected ? 'border-b-4 border-solid border-global-color-primary px-4 py-2' : 'bg-transparent'}`}
-              >
-                Analysis
-              </button>
-            )}
-          </Tab>
-          <Tab as={React.Fragment}>
-            {({ selected }) => (
-              <button
-                className={`px-4 py-2 ${selected ? 'border-b-4 border-solid border-global-color-primary px-4 py-2' : 'bg-transparent'}`}
-              >
-                Dividends
-              </button>
-            )}
-          </Tab>
-        </TabList>
-        <TabPanels className={'p-10'}>
-          <TabPanel>
-            <div>
-              <section>
-                The graphs will be displayed here...
-              </section>
-              <div>
-                <div>
-                  <header data-cy-id="holdings-header" className="flex justify-between items-center mb-4">
-                    <h2 className="text-xl">
-                      Holdings
-                      <span className='m-3 p-2 bg-global-color-primary border-global-color-secondary w-1 rounded-full'> {portfolio?.tickers.length}</span>
-                    </h2>
+    <div className='container mx-auto px-4 py-6'>
+      <header className='flex justify-between items-center mb-8'>
+        <h1 className='text-3xl font-bold text-dark-gunmetal'>
+          {portfolio?.name}
+        </h1>
+        <div className='flex flex-row justify-between items-center text-global-color-secondary hover:underline'>
+          <FontAwesomeIcon icon={faArrowLeftLong} />
+          <Link
+            to='/portfolio'
+            className='ml-2'
+          >
+            Back to Portfolios
+          </Link>
+        </div>
+      </header>
 
-                    <Button
-                      classProps={`bg-global-color-primary hover:bg-global-color-secondary font-semibold text-black py-2 px-4 rounded focus:ring-4`}
-                      onClick={() => console.log('Button to add a new holding is clicked...')}
-                    >
-                      Edit
-                    </Button>
-                  </header>
+      <Tabs>
+        <TabsHeader>
+          {['Holdings', 'Analysis', 'Dividends'].map((tab) => (
+            <Tab
+              key={tab}
+              title={tab}
+              active={activeTab === tab}
+              onClick={() => setActiveTab(tab)}
+            />
+          ))}
+        </TabsHeader>
 
-                  <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-                    <table className="w-full text-sm text-left rtl:text-right text-dark-gunmetal dark:text-global-color-accent">
-                      <thead className="text-xs text-gray-700 uppercase dark:bg-global-color-primary dark:text-dark-gunmetal">
-                        <tr>
-                          <th scope="col" className="px-6 py-3">
-                            Name
-                          </th>
-                          <th scope="col" className="px-6 py-3">
-                            Current Price
-                          </th>
-                          <th scope="col" className="px-6 py-3">
-                            Position
-                          </th>
-                          <th scope="col" className="px-6 py-3">
-                            <span className="sr-only">Edit</span>
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {stocks.map((stock: Stock) => (
-                          <tr key={stock.id} className='bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600'>
-                            <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                              {stock?.logo}
-                              {stock.name} <br />
-                              {stock.symbol}
-                            </th>
-                            <td className="py-6 px-4">
-                              $ {stock.purchasePrice}
-                            </td>
-                            <td className="py-6 px-4">
-                              {stock.quantity}
-                            </td>
-                            <td className="px-6 py-4 text-right">
-                              <a href="#" className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+        <TabsBody>
+          <TabPanel active={activeTab === 'Holdings'}>
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold mb-4">Portfolio Overview</h2>
+              <p>Total Value: 20000</p>
+            </section>
+
+            <section className="mb-8">
+              <div className="flex justify-start items-center mb-4">
+                <h2 className="text-2xl font-semibold">Holdings</h2>
+                <div className="bg-global-color-primary text-dark-gunmetal rounded-full ml-4 px-3 py-1">
+                  {portfolio.tickers ? portfolio.tickers.length : 0}
                 </div>
               </div>
-            </div>
+              {/* export interface Stock {
+                id: string;
+                name: string;
+                symbol: string;
+                allocation: number;
+                purchasePrice: number;
+                currency: string;
+                portfolioId: string;
+                userId: string;
+                logo: string;
+                } */}
+              <StockTable stocks={portfolio.tickers ? portfolio.tickers.map(ticker => ({
+                id: ticker.id,
+                name: ticker.name,
+                symbol: ticker.symbol,
+                allocation: 0,
+                purchasePrice: 0,
+                currency: portfolio?.currency || 'USD', 
+                portfolioId: portfolio?.userId,
+                userId: portfolio.userId,
+                logo: ''
+              })) : []} onEdit={handleEditStock} />
+            </section>
+
+            <section>
+              <h2 className="text-2xl font-semibold mb-4">Transactions</h2>
+              <TransactionsTable transactions={transactions} />
+            </section>
           </TabPanel>
-          <TabPanel>
-            <p>Analysis content goes here...</p>
+
+          <TabPanel active={activeTab === 'Analysis'}>
+            <h2 className="text-2xl font-semibold mb-4">Analysis</h2>
+            {/* Add analysis content here */}
           </TabPanel>
-          <TabPanel>
-            <p>Dividends content goes here...</p>
+
+          <TabPanel active={activeTab === 'Dividends'}>
+            <h2 className="text-2xl font-semibold mb-4">Dividends</h2>
+            {/* Add dividends content here */}
           </TabPanel>
-        </TabPanels>
-      </TabGroup>
+        </TabsBody>
+      </Tabs>
     </div>
   );
 };

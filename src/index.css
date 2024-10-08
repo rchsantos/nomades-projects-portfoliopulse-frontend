@@ -15,7 +15,20 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+footer {
+  padding: 1rem;
+  text-align: center;
+  width: 100%;
+  margin-top: auto;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+.container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }

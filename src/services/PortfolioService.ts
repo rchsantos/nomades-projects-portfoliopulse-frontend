@@ -1,25 +1,21 @@
+import { Stock } from '../types/Stock';
+
+
+// This interface is used to represent the portfolio data.
 export interface Portfolio {
-  id: number;
+  id?: number;
   name: string;
   description: string;
-  tickers: [];
-  user_id: string;
-  strategy: string;
+  userId: string;
+  tickers?: Array<Stock>;
+  currency?: string;
+  strategy?: string;
+  value?: number;
+  gain?: number;
 }
 
-export interface StockDTO {
-  logo: string
-  name: string;
-  symbol: string;
-  quantity: number;
-  purchase_price: number;
-  currency: string;
-  portfolio_id: string;
-  id: string;
-  user_id: string;
-}
-
-export interface Stock {
+// This interface is used to represent the stock data in the portfolio details.
+export interface StockData {
   id: string;
   logo: string;
   name: string;
@@ -30,8 +26,17 @@ export interface Stock {
   userId: string;
 }
 
-// Get all portfolios
-export async function getPortfolios(): Promise<Portfolio[]> {
+// This interface is used to represent the transaction of stocks in the portfolio details.
+export interface Transaction {
+  id: string;
+  date: string;
+  ticker: string;
+  quantity: number;
+  price: number;
+}
+
+// Get all Portfolios
+export  const getPortfolios = async (userId: string): Promise<Portfolio[]> => {
   const response = await fetch(`${process.env.REACT_APP_API_URL}/portfolio`, {
     method: 'GET',
     headers: {
@@ -47,8 +52,8 @@ export async function getPortfolios(): Promise<Portfolio[]> {
   return await response.json();
 }
 
-// Get a single portfolio
-export async function getPortfolio(portfolioId: string): Promise<Portfolio> {
+// Fecth a Portfolio
+export const fetchPortfolio = async (portfolioId: string): Promise<Portfolio> => {
   const response = await fetch(`${process.env.REACT_APP_API_URL}/portfolio/${portfolioId}`, {
     method: 'GET',
     headers: {
@@ -58,38 +63,55 @@ export async function getPortfolio(portfolioId: string): Promise<Portfolio> {
   });
 
   if (!response.ok) {
+    console.log('Response Message : ', response.statusText);
     throw new Error('Failed to fetch portfolio');
   }
 
-  return await response.json();
-}
+  // Log the response status and body
+  console.log('Response Status', response.status);
+  console.log('Response Body', response.body);
 
-export async function createPortfolio(
-  portfolioData: { 
-    name: string,
-    description: string, 
-    ticker: [],
-    user_id: string,
-    strategy: string
-  }
-): Promise<Portfolio> {
+  return response.json();
+};
+
+// Add a Portfolio
+export const addPortfolio = async (portfolio: Portfolio): Promise<Portfolio> => {
   const response = await fetch(`${process.env.REACT_APP_API_URL}/portfolio`, {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      'Authorization': `${localStorage.getItem('tokenType')} ${localStorage.getItem('accessToken')}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(portfolioData),
+    body: JSON.stringify(portfolio),
   });
 
+  // const data = await response.json();
+
+  console.log('Response Status', response.status);
+  console.log('Response Body', response.body);
+
   if (!response.ok) {
-    throw new Error('Failed to create portfolio');
+    
+    if (response.status === 400) {
+      throw new Error('Bad request');
+    } else if (response.status === 401) {
+      throw new Error('Unauthorized');
+    } else if (response.status === 403) {
+      throw new Error('Forbidden');
+    } else if (response.status === 500) {
+      throw new Error('Failed to add portfolio');
+    }
+
+    throw new Error('Failed to add portfolio');
   }
 
-  return await response.json();
-}
+  return response.json();
+};
 
-export async function getRelatedStocks(portfolioId: string): Promise<StockDTO[]> {
+
+
+
+export const fetchPortfolioStocks = async (portfolioId: string): Promise<StockData[]> => {
   const response = await fetch(`${process.env.REACT_APP_API_URL}/portfolio/${portfolioId}/assets`, {
     method: 'GET',
     headers: {
@@ -99,22 +121,17 @@ export async function getRelatedStocks(portfolioId: string): Promise<StockDTO[]>
   });
 
   if (!response.ok) {
-    throw new Error('Failed to fetch stocks');
+    throw new Error('Failed to fetch portfolio stocks');
   }
-  
-  const data = await response.json();
-  return data as StockDTO[];
-}
 
-export const transformStockDTO = (stockDTO: StockDTO): Stock => {
-  return {
-    id: stockDTO.id,
-    logo: stockDTO.logo,
-    name: stockDTO.name,
-    symbol: stockDTO.symbol,
-    quantity: stockDTO.quantity,
-    purchasePrice: stockDTO.purchase_price,
-    portfolioId: stockDTO.portfolio_id,
-    userId: stockDTO.user_id,
-  };
-}
+  return response.json();
+};
+
+export const fetchTransactions = async (portfolioId: string): Promise<Transaction[]> => {
+  // Replace with actual API call
+  return [
+    { id: '1', date: '2024-10-8', ticker: 'AAPL', quantity: 100, price: 221.69 },
+    { id: '2', date: '2024-08-07', ticker: 'GOOGL', quantity: 20, price: 162.98 },
+    { id: '3', date: '2024-08-07', ticker: 'TSLA', quantity: 720, price: 240.83 },
+  ];
+};

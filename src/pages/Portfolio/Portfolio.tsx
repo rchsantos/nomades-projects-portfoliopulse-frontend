@@ -1,60 +1,86 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { getPortfolios, Portfolio as PortfolioInterface } from '../../services/PortfolioService';
+// import { Link } from 'react-router-dom';
+import { getPortfolios, Portfolio } from '../../services/PortfolioService';
 
-// Components
+// Components : Atoms
 import Button from '../../components/atoms/Button';
-import Select from '../../components/atoms/Select';
-import PortfolioList from '../../components/organisms/PortfolioList';
+// import Select from '../../components/atoms/Select';
+
+// Components : Organisms
+import GenericModal from '../../components/organisms/GenericModal';
+import AddPortfolio from '../../components/organisms/AddPortfolioForm';
+
+import PortfolioTable from '../../components/organisms/PortfolioTable';
 
 const Portfolios: React.FC = () => {
-  const [portfolios, setPortfolios] = useState<PortfolioInterface[]>([]);
-  const [selectedOption, setSelectedOption] = useState<string>('All Portfolios');
-  const [selectOptions, setSelectOptions] = useState<string[]>(['All Portfolios']);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [modalContent, setModalContent] = useState<React.ReactNode | null>(null);
+  const [portfolios, setPortfolios] = useState<Portfolio[]>([]);
+
+  const handlePortfolioAdded = async () => {
+    const updatedPortfolios = await getPortfolios(localStorage.getItem('userId') || '');
+    setPortfolios(updatedPortfolios);
+  }
 
   useEffect(() => {
-    async function fetchPortfolios() {
+    const fetchPortfolios = async () => {
       try {
-        const portfolios = await getPortfolios();
-        setPortfolios(portfolios);
-        setLoading(false);
-
-        // Update select options based on fetched portfolios
-        const options = ['All Portfolios', ...portfolios.map(p => p.name)];
-        setSelectOptions(options);
+        const userId = localStorage.getItem('userId');
+        const data: Portfolio[] = await getPortfolios(userId || '');
+        console.log(data);
+        setPortfolios(data);
       } catch (error) {
-        console.error('Failed to fetch portfolios:', error);
+        console.error('Error fetching portfolios:', error);
       }
-    }
+    };
 
     fetchPortfolios();
   }, []);
 
   return (
-    <div className="container mx-auto px-6 py-8">
+    <div className='container mx-auto, px-4 py-6'>
+
       {/* Header */}
-      <div className="flex justify-between items-center mb-8">
-        <Select
-          headerLabel=''
-          options={selectOptions}
-          value={selectedOption}
-          onChange={setSelectedOption}
+      <header className='flex justify-between items-center mb-8'>
+        <h1 className="text-3xl font-bold text-dark-gunmetal mb-4">
+          Portfolio Management
+        </h1>
+        <Button
+          type='button'
+          label='Add My Portfolio'
+          className='bg-global-color-primary text-dark-gunmetal py-2 px-4 rounded'
+          onClick={() => {
+            setModalContent(
+              <AddPortfolio
+                onPortfolioAdded={handlePortfolioAdded}
+                onClosed={() => setIsModalOpen(false)}
+              />
+            );
+            setIsModalOpen(true);
+          }}
         />
-        <Button 
-          classProps={`bg-global-color-primary hover:bg-global-color-secondary font-semibold text-black py-2 px-4 rounded focus:ring-4`}
-          onClick={() => console.log('Button to create a new portfolio is clicked...')}>
-          Create Portfolio
-        </Button>
-      </div>
+      </header>
+      {/* <AddPortfolio /> */}
 
-      {/* Empty Section for Future Graphs */}
-      <div className="mb-8">
-        {/* Future content: Performance vs Market graph and Portfolio Snowflake */}
-      </div>
+      {/* If no portfolios founded a sample message for create one */}
+      {portfolios.length === 0 && (
+        <div className='p-4 rounded text-center'>
+          <p className='text-dark-gunmetal'>
+            You don't have any portfolios yet. Click the button above to add one.
+          </p>
+        </div>
+      )}
 
-      {/* Portfolio Cards Section */}
-      <PortfolioList loading={loading} portfolios={portfolios} />
+      <PortfolioTable portfolios={portfolios} />
+
+      <GenericModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onOpen={() => setIsModalOpen(true)}
+        title='Portfolio Details'
+      >
+        {modalContent}
+      </GenericModal>
     </div>
   );
 };
