@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { login, LoginData } from '../services/AuthService';
+import { login, LoginData } from '../../services/AuthService';
 
 const LoginForm: React.FC = () => {
   const [username, setUsername] = useState<string>('');
@@ -19,7 +19,7 @@ const LoginForm: React.FC = () => {
     try {
       const response = await login({ username, password } as LoginData);
       localStorage.setItem('accessToken', response.access_token);
-      localStorage.setItem('refreshToken', response.token_type);
+      localStorage.setItem('tokenType', response.token_type);
       localStorage.setItem('user', JSON.stringify({username}));
       console.log('Login successful');
       setSuccess('Login successful');

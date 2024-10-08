@@ -1,11 +1,16 @@
-const API_URL = process.env.REACT_APP_API_URL;
-console.log('API_URL:', API_URL);
+import { RegisterResponseDTO } from "../dtos/RegisterRequestDTO";
+import { UserMapper } from "../mappers/UserMapper";
+
+const apiUrl = process.env.REACT_APP_API_URL;
+console.log('API_URL:', apiUrl);
 
 export interface RegisterData {
   username: string;
   email: string;
   password: string;
   fullName?: string;
+  role?: string;
+  isActive?: boolean;
 }
 
 export interface RegisterResponse {
@@ -14,28 +19,44 @@ export interface RegisterResponse {
 }
 
 export async function register(data: RegisterData): Promise<RegisterResponse> {
+  console.log('Original Data:', data);
+
+  // Map the User entity to RegisterRequestDTO
+  const registerRequestDTO = UserMapper.toRegisterRequestDTO({
+    ...data,
+    fullName: data.fullName || '',
+    role: data.role || '',
+    isActive: data.isActive !== undefined ? data.isActive : true,
+  });
+
+  console.log('Mapped RegisterRequestDTO:', registerRequestDTO); 
 
   const response = await fetch(
-    `${API_URL}/register`, 
+    `${apiUrl}/register`, 
     {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(registerRequestDTO),
   });
-
-  console.log('Data: ', data);
 
   console.log('Response:', response);
 
   if (!response.ok) {
     const message = await response.json();
-    console.error('Resposne:', message);
-    throw new Error(message.detail ||'Registration failed');
+    console.error('Response:', message);
+    throw new Error(message.detail || 'Registration failed');
   }
 
-  return await response.json();
+  const responseData = await response.json();
+
+  // Map the RegisterResponseDTO to User entity
+  const registerResponseDTO = new RegisterResponseDTO(responseData.access_token, responseData.refresh_token);
+  return {
+    accessToken: registerResponseDTO.access_token,
+    refreshToken: registerResponseDTO.refresh_token,
+  };
 }
 
 export interface LoginData {
@@ -50,9 +71,7 @@ export interface AuthResponse {
 
 export async function login(data: LoginData): Promise<AuthResponse> {
 
-  console.log('Data:', data);
-
-  const response = await fetch(`${API_URL}/login`, {
+  const response = await fetch(`${apiUrl}/login`, {
     method: 'POST',
     headers: {
       'content-type' : 'application/json',
@@ -64,6 +83,8 @@ export async function login(data: LoginData): Promise<AuthResponse> {
     const message = await response.json();
     throw new Error(message.detail || 'Login failed');
   }
+
+  console.log('Response:', response);
 
   return await response.json();
 

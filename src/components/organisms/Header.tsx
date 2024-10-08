@@ -1,6 +1,7 @@
-import { Button } from '@headlessui/react';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+
+import Button from '../atoms/Button';
 
 const Header: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
@@ -32,21 +33,22 @@ const Header: React.FC = () => {
           <div className="flex flex-wrap items-center max-w-screen-xl">
             {isLoggedIn ? (
               <div className='space-x-4 flex items-center lg:order-2'>
-                <Link to="/portfolios" className="text-global-color-secondary py-2 px-4 rounded">
-                  Portfolios
+                <Link to="/portfolio" className="text-global-color-primary py-2 px-4 rounded">
+                  My Portfolios
                 </Link>
                 <Button
+                  type='button'
+                  label='Logout'
                   onClick={handleLogout}
-                  className="bg-global-color-secondary hover:bg-global-color-primary font-semibold text-black py-2 px-4 rounded focus:ring-4">
-                    Logout
-                  </Button>
+                  className="bg-global-color-secondary hover:bg-global-color-primary rounded focus:ring-4">
+                </Button>
               </div>
             ) : (
               <div className="space-x-4 flex items-center lg:order-2">
                 <Link
                   to="/login"
-                  className="text-global-color-secondary py-2 px-4 rounded">
-                  Login
+                  className="text-global-color-primary py-2 px-4 rounded">
+                  Sign in
                 </Link>
                 <Link
                   to="/register"

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { register, RegisterData } from '../services/AuthService';
+import { register, RegisterData } from '../../services/AuthService';
 
 const RegisterForm: React.FC = () => {
   const [username, setUsername] = useState<string>('');
