@@ -39,7 +39,7 @@ const PortfolioCard: React.FC<PortfolioCardProps> = ({ name, value, gain, portfo
       </p>
       <p> Gain :   
         <span 
-          className={`text-${totalReturn.startsWith('+') ? 'global-color-secondary' : 'red'} text-1xl font-semibold mb-4 ml-3`} >
+          className={`text-${totalReturn.startsWith('+') ? 'global-color-secondary' : 'danger'} text-1xl font-semibold mb-4 ml-3`} >
          {totalReturn}
         </span>
       </p>

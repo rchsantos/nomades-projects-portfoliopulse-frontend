@@ -140,7 +140,7 @@ const PortfolioDetails: React.FC = () => {
 
       <Tabs>
         <TabsHeader>
-          {['Holdings', 'Analysis', 'Dividends'].map((tab) => (
+          {['Holdings', 'Analysis', 'Dividends', 'Insights', 'Watchlists', 'Screeners'].map((tab) => (
             <Tab
               key={tab}
               title={tab}
@@ -162,7 +162,7 @@ const PortfolioDetails: React.FC = () => {
                     {totalInvestment}
                   </span>
                   <span className='font-semibold text-gray-600'>
-                    Total Invested
+                  Invested Capital
                   </span>
                 </div>
                 <div className='flex flex-col mb-4'>
@@ -170,11 +170,11 @@ const PortfolioDetails: React.FC = () => {
                     {totalValue}
                   </span>
                   <span className='font-semibold text-gray-600'>
-                    Total Value
+                    Total Return
                   </span>
                 </div>
                 <div className='flex flex-col mb-4'>
-                  <span className={`text-${returnPercentage.startsWith('+') ? 'global-color-secondary' : 'red'} text-2xl font-black`}>
+                  <span className={`text-${returnPercentage.startsWith('+') ? 'global-color-secondary' : 'danger'} text-2xl font-black`}>
                     {returnPercentage}
                   </span>
                   <span className='font-semibold text-gray-600'>
@@ -246,6 +246,21 @@ const PortfolioDetails: React.FC = () => {
           <TabPanel active={activeTab === 'Dividends'}>
             <h2 className="text-2xl font-semibold mb-4 text-gray-500">
               Dividends Coming Soon 🚀
+            </h2>
+          </TabPanel>
+          <TabPanel active={activeTab === 'Insights'}>
+            <h2 className="text-2xl font-semibold mb-4 text-gray-500">
+              Insights Coming Soon 🚀
+            </h2>
+          </TabPanel>
+          <TabPanel active={activeTab === 'Watchlists'}>
+            <h2 className="text-2xl font-semibold mb-4 text-gray-500">
+              Watchlists Coming Soon 🚀
+            </h2>
+          </TabPanel>
+          <TabPanel active={activeTab === 'Screeners'}>
+            <h2 className="text-2xl font-semibold mb-4 text-gray-500">
+              Screeners Coming Soon 🚀
             </h2>
           </TabPanel>
         </TabsBody>
