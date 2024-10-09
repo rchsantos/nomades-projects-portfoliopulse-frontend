@@ -162,7 +162,7 @@ const PortfolioDetails: React.FC = () => {
                     {totalInvestment}
                   </span>
                   <span className='font-semibold text-gray-600'>
-                    Total Investment
+                    Total Invested
                   </span>
                 </div>
                 <div className='flex flex-col mb-4'>
