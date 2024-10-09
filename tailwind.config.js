@@ -33,7 +33,8 @@ module.exports = {
       'global-color-primary': '#00FFC4',
       'global-color-secondary': '#00AF78',
       'global-color-accent': '#00AF78',
-      'dark-gunmetal': '#23242F'
+      'dark-gunmetal': '#23242F',
+      'danger': '#f13824'
     }
   },
   plugins: [
