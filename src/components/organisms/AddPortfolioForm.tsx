@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { addPortfolio } from '../../services/PortfolioService';
 import { Stock } from '../../types/Stock';
 
-
-export interface AddPortfolioProps {
+interface AddPortfolioProps {
   // Define the props type for the AddPortfolio component below
   // The props is an object with no properties
   onPortfolioAdded: () => void;
@@ -39,6 +38,7 @@ const AddPortfolio: React.FC<AddPortfolioProps> = ({ onPortfolioAdded, onClosed 
         id: ticker,
         name: ticker,
         symbol: ticker,
+        shares: 0, // Add the missing shares property
         allocation: 0,
         purchasePrice: 0,
         currency: currency,
@@ -49,7 +49,7 @@ const AddPortfolio: React.FC<AddPortfolioProps> = ({ onPortfolioAdded, onClosed 
 
       console.log('Submitting portfolio with User Token:', userId);
 
-      await addPortfolio({ name, description, userId: userId, tickers: stockTickers, strategy, currency });
+      await addPortfolio({ name, description, userId: userId, assets: stockTickers, strategy, currency });
       setName('');
       setDescription('');
       setTickers([]);

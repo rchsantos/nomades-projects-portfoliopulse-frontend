@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { RegisterResponseDTO } from "../dtos/RegisterRequestDTO";
 import { UserMapper } from "../mappers/UserMapper";
 
@@ -69,23 +70,28 @@ export interface AuthResponse {
   token_type: string;
 }
 
-export async function login(data: LoginData): Promise<AuthResponse> {
+export const login = async ({ username, password }: LoginData) => {
+  try {
+    const response = await axios.post(`${apiUrl}/login`, {
+      username,
+      password,
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
 
-  const response = await fetch(`${apiUrl}/login`, {
-    method: 'POST',
-    headers: {
-      'content-type' : 'application/json',
-    },
-    body: JSON.stringify(data),
-  });
-
-  if (!response.ok) {
-    const message = await response.json();
-    throw new Error(message.detail || 'Login failed');
+    if (response.status === 200) {
+      const { access_token, token_type, user } = response.data;
+      localStorage.setItem('accessToken', access_token);
+      localStorage.setItem('tokenType', token_type);
+      localStorage.setItem('user', JSON.stringify(user));
+      return response.data;
+    } else {
+      throw new Error('Login failed');
+    }
+  } catch (error) {
+    console.error('Error during login:', error);
+    throw error;
   }
-
-  console.log('Response:', response);
-
-  return await response.json();
-
-}
+};

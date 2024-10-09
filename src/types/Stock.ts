@@ -1,11 +1,12 @@
 export interface Stock {
   id: string;
-  name: string;
   symbol: string;
-  allocation: number;
+  name: string;
+  shares: number;
   purchasePrice: number;
   currency: string;
   portfolioId: string;
   userId: string;
+  allocation: number;
   logo: string;
 }
