@@ -87,7 +87,7 @@ export const updatePortfolio = async (portfolioDTO: PortfolioDTO): Promise<Portf
   const response = await fetch(`${process.env.REACT_APP_API_URL}/portfolio/${portfolioDTO.id}`, {
     method: 'PUT',
     headers: {
-      'Authorization': `${localStorage.getItem('tokenType')} ${localStorage.getItem('token')}`,
+      'Authorization': `${localStorage.getItem('tokenType')} ${localStorage.getItem('accessToken')}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(portfolioDTO),
@@ -102,7 +102,7 @@ export const deletePortfolio = async (portfolioId: string): Promise<void> => {
   await fetch(`${process.env.REACT_APP_API_URL}/portfolio/${portfolioId}`, {
     method: 'DELETE',
     headers: {
-      'Authorization': `${localStorage.getItem('tokenType')} ${localStorage.getItem('token')}`,
+      'Authorization': `${localStorage.getItem('tokenType')} ${localStorage.getItem('accessToken')}`,
       'Content-Type': 'application/json',
     },
   });
