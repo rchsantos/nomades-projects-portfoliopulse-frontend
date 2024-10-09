@@ -140,7 +140,7 @@ const PortfolioDetails: React.FC = () => {
 
       <Tabs>
         <TabsHeader>
-          {['Holdings', 'Analysis', 'Dividends', 'Insights', 'Watchlists', 'Screeners'].map((tab) => (
+          {['Holdings', 'Analysis', 'Dividends', 'Insights', 'Watchlists', 'Screeners', 'AI Analysis Portfolio'].map((tab) => (
             <Tab
               key={tab}
               title={tab}
@@ -261,6 +261,11 @@ const PortfolioDetails: React.FC = () => {
           <TabPanel active={activeTab === 'Screeners'}>
             <h2 className="text-2xl font-semibold mb-4 text-gray-500">
               Screeners Coming Soon 🚀
+            </h2>
+          </TabPanel>
+          <TabPanel active={activeTab === 'AI Analysis Portfolio'}>
+            <h2 className="text-2xl font-semibold mb-4 text-gray-500">
+              AI Analysis Portfolio Coming Soon 🤖🤖🤖 
             </h2>
           </TabPanel>
         </TabsBody>
