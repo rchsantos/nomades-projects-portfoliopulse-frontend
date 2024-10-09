@@ -2,11 +2,10 @@ import axios from 'axios';
 import { TransactionDTO, TransactionResponseDTO } from '../dtos/TransactionDTO';
 import { TransactionMapper } from '../mappers/TransactionMapper';
 import { Transaction } from '../types/Transaction';
-// import { Stock } from '../types/Stock';
 import { PortfolioDTO, PortfolioResponseDTO } from '../dtos/PortfolioDTO';
 import { PortfolioMapper } from '../mappers/PortfolioMapper';
 import { Portfolio } from '../types/Portfolio';
-
+import { TotalValueResponse } from '../types/TotalValueResponse';
 
 // This interface is used to represent the stock data in the portfolio details.
 export interface StockData {
@@ -23,8 +22,6 @@ export interface StockData {
 // Get all Portfolios
 export const getPortfolios = async (userId: string): Promise<Portfolio[]> => {
    
-  // console.log('Token Type : ', localStorage.getItem('tokenType'));
-  // console.log('Token : ', localStorage.getItem('accessToken'));
   const response = await fetch(`${process.env.REACT_APP_API_URL}/portfolio`, {
     method: 'GET',
     headers: {
@@ -191,4 +188,35 @@ export const addTransaction = async (portfolio_id: string, transactionDTO: Trans
 
   const transactionResponseDTO: TransactionResponseDTO = await response.json();
   return TransactionMapper.toTransaction(transactionResponseDTO);
+};
+
+export const fetchTotalValues = async (portfolioId: string): Promise<TotalValueResponse> => {
+  if (!portfolioId) {
+    throw new Error('Portfolio ID is required');
+  }
+
+  const tokenType = localStorage.getItem('tokenType');
+  const accessToken = localStorage.getItem('accessToken');
+
+  if (!tokenType || !accessToken) {
+    throw new Error('Authorization token is missing');
+  }
+
+  try {
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}/portfolio/${portfolioId}/total-value`, {
+      headers: {
+        'Authorization': `${tokenType} ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (response.status !== 200) {
+      throw new Error('Failed to fetch total values');
+    }
+
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching total values:', error);
+    throw error;
+  }
 };

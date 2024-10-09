@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsisVertical, faArrowLeftLong } from '@fortawesome/free-solid-svg-icons';
-import { fetchTransactions, addTransaction, fetchPortfolio } from '../../services/PortfolioService';
+import { fetchTransactions, addTransaction, fetchTotalValues, fetchPortfolio } from '../../services/PortfolioService';
 import { Transaction } from '../../types/Transaction';
 import {
   Tabs,
@@ -20,6 +20,7 @@ import GenericModal from '../../components/organisms/GenericModal';
 import { TransactionDTO } from '../../dtos/TransactionDTO';
 import { Portfolio } from '../../types/Portfolio';
 import { Asset } from '../../types/Asset';
+import { formatCurrency, formatPercentage } from '../../utils/format';
 
 const PortfolioDetails: React.FC = () => {
   const { portfolioId } = useParams<{ portfolioId: string }>();
@@ -29,6 +30,9 @@ const PortfolioDetails: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState<React.ReactNode>(null);
+  const [totalInvestment, setTotalInvestment] = useState<string>('');
+  const [totalValue, setTotalValue] = useState<string>('');
+  const [returnPercentage, setReturnPercentage] = useState<string>('');
 
   useEffect(() => {
     // console.log('Portfolio ID:', portfolioId);
@@ -65,6 +69,25 @@ const PortfolioDetails: React.FC = () => {
 
     if (portfolio) {
       loadTransactions();
+    }
+  }, [portfolio]);
+
+  useEffect(() => {
+    const loadTotalValues = async () => {
+      if (portfolio) {
+        try {
+          const totalValues = await fetchTotalValues(portfolio.id ? String(portfolio.id) : '');
+          setTotalInvestment(formatCurrency(totalValues.total_investment));
+          setTotalValue(formatCurrency(totalValues.total_value));
+          setReturnPercentage(formatPercentage(totalValues.return_percentage));
+        } catch (error) {
+          console.error('Error loading total values:', error);
+        }
+      }
+    };
+
+    if (portfolio) {
+      loadTotalValues();
     }
   }, [portfolio]);
 
@@ -129,9 +152,38 @@ const PortfolioDetails: React.FC = () => {
 
         <TabsBody>
           <TabPanel active={activeTab === 'Holdings'}>
-            <section className="mb-8">
-              <h2 className="text-2xl font-semibold mb-4">Portfolio Overview</h2>
-              <p>Total Value: 20000</p>
+            <section className="mb-16">
+              <h2 className="text-3xl font-semibold mb-8 mt-6">
+                Portfolio Overview
+              </h2>
+                <div className='grid grid-cols-3'>
+                <div className='flex flex-col mb-4'>
+                  <span className='text-2xl text-dark-gunmetal font-black'>
+                    {totalInvestment}
+                  </span>
+                  <span className='font-semibold text-gray-600'>
+                    Total Investment
+                  </span>
+                </div>
+                <div className='flex flex-col mb-4'>
+                  <span className='text-2xl text-dark-gunmetal font-black'>
+                    {totalValue}
+                  </span>
+                  <span className='font-semibold text-gray-600'>
+                    Total Value
+                  </span>
+                </div>
+                <div className='flex flex-col mb-4'>
+                  <span className={`text-${returnPercentage.startsWith('+') ? 'global-color-secondary' : 'red'} text-2xl font-black`}>
+                    {returnPercentage}
+                  </span>
+                  <span className='font-semibold text-gray-600'>
+                  Return
+                  {/*  */}
+                  </span>
+                </div>
+              </div>
+              
             </section>
 
             <section className="mb-8">
