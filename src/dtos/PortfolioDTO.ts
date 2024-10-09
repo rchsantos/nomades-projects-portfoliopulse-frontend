@@ -10,6 +10,7 @@ export interface PortfolioDTO {
   totalValue?: number;
   totalReturn?: number;
   currency: string;
+  shares?: number;
 }
 
 export interface PortfolioResponseDTO {
@@ -17,9 +18,20 @@ export interface PortfolioResponseDTO {
   name: string;
   description?: string;
   userId: string;
-  assets: Stock[];
   strategy?: string;
-  totalValue?: number;
-  totalReturn?: number;
+  assets: Array<{
+    id: string;
+    symbol: string;
+    name: string;
+    shares: number; // Add the shares property
+    purchase_price: number;
+    currency: string;
+    portfolio_id: string;
+    user_id: string;
+    logo: string;
+    allocation: number; 
+  }>;
+  totalValue: number;
+  totalReturn: number;
   currency: string;
 }

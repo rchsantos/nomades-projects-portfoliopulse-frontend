@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { TransactionDTO, TransactionResponseDTO } from '../dtos/TransactionDTO';
 import { TransactionMapper } from '../mappers/TransactionMapper';
 import { Transaction } from '../types/Transaction';
@@ -22,8 +23,8 @@ export interface StockData {
 // Get all Portfolios
 export const getPortfolios = async (userId: string): Promise<Portfolio[]> => {
    
-  console.log('Token Type : ', localStorage.getItem('tokenType'));
-  console.log('Token : ', localStorage.getItem('accessToken'));
+  // console.log('Token Type : ', localStorage.getItem('tokenType'));
+  // console.log('Token : ', localStorage.getItem('accessToken'));
   const response = await fetch(`${process.env.REACT_APP_API_URL}/portfolio`, {
     method: 'GET',
     headers: {
@@ -37,25 +38,36 @@ export const getPortfolios = async (userId: string): Promise<Portfolio[]> => {
 };
 
 // Fetch a Portfolio
-export const fetchPortfolio = async (portfolioId: string): Promise<Portfolio> => {
-  const response = await fetch(`${process.env.REACT_APP_API_URL}/portfolio/${portfolioId}`, {
-    method: 'GET',
-    headers: {
-      'Authorization': `${localStorage.getItem('tokenType')} ${localStorage.getItem('accessToken')}`,
-      'Content-Type': 'application/json',
-    },
-  });
-
-  if (!response.ok) {
-    console.log('Response Message : ', response.statusText);
-    throw new Error('Failed to fetch portfolio');
+export const fetchPortfolio = async (portfolioId: string): Promise<Portfolio | null> => {
+  if (!portfolioId) {
+    throw new Error('Portfolio ID is required');
   }
 
-  // Log the response status and body
-  console.log('Response Status', response.status);
-  console.log('Response Body', response.body);
+  const tokenType = localStorage.getItem('tokenType');
+  const accessToken = localStorage.getItem('accessToken');
 
-  return response.json();
+  if (!tokenType || !accessToken) {
+    throw new Error('Authorization token is missing');
+  }
+
+  try {
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}/portfolio/${portfolioId}`, {
+      headers: {
+        'Authorization': `${tokenType} ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (response.status === 200) {
+      console.log('Portfolio Data:', response.data);
+      return response.data;
+    } else {
+      throw new Error('Failed to fetch portfolio');
+    }
+  } catch (error) {
+    console.error('Error fetching portfolio:', error);
+    throw error;
+  }
 };
 
 // Add a new Portfolio
@@ -116,33 +128,58 @@ export const fetchPortfolioStocks = async (portfolioId: string): Promise<StockDa
 };
 
 export const fetchTransactions = async (portfolioId: string): Promise<Transaction[]> => {
-  const response = await fetch(`${process.env.REACT_APP_API_URL}/portfolio/${portfolioId}/transaction`, {
-    method: 'GET',
-    headers: {
-      'Authorization': `${localStorage.getItem('tokenType')} ${localStorage.getItem('accessToken')}`,
-      'Content-Type': 'application/json',
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error('Failed to fetch transactions');
+  if (!portfolioId) {
+    throw new Error('Portfolio ID is required');
   }
 
-  const transactionResponseDTOs: TransactionResponseDTO[] = await response.json();
-  return transactionResponseDTOs.map(TransactionMapper.toTransaction);
+  console.log('Fetching transactions for portfolio ID:', portfolioId);
+
+  const tokenType = localStorage.getItem('tokenType');
+  const accessToken = localStorage.getItem('accessToken');
+
+  if (!tokenType || !accessToken) {
+    throw new Error('Authorization token is missing');
+  }
+
+  try {
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}/portfolio/${portfolioId}/transaction`, {
+      headers: {
+        'Authorization': `${tokenType} ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (response.status !== 200) {
+      throw new Error('Failed to fetch transactions');
+    }
+
+    const transactionResponseDTOs: TransactionResponseDTO[] = response.data;
+    console.log('Transaction Response DTOs:', transactionResponseDTOs);
+    return transactionResponseDTOs.map(TransactionMapper.toTransaction);
+  } catch (error) {
+    console.error('Error fetching transactions:', error);
+    throw error;
+  }
 };
 
 export const addTransaction = async (portfolio_id: string, transactionDTO: TransactionDTO): Promise<Transaction> => {
-  console.log('Portfolio ID : ', portfolio_id);
+  // console.log('Portfolio ID : ', portfolio_id);
   
   if (!portfolio_id) {
     throw new Error('Portfolio ID is required');
   }
 
+  const tokenType = localStorage.getItem('tokenType');
+  const accessToken = localStorage.getItem('accessToken');
+
+  if (!tokenType || !accessToken) {
+    throw new Error('Authorization token is missing');
+  }
+
   const response = await fetch(`${process.env.REACT_APP_API_URL}/portfolio/${portfolio_id}/transaction`, {
     method: 'POST',
     headers: {
-      'Authorization': `${localStorage.getItem('tokenType')} ${localStorage.getItem('accessToken')}`,
+      'Authorization': `${tokenType} ${accessToken}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(transactionDTO),

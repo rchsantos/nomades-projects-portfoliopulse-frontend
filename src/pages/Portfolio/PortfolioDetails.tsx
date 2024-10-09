@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsisVertical, faArrowLeftLong } from '@fortawesome/free-solid-svg-icons';
-import { fetchTransactions, fetchPortfolio, addTransaction, getPortfolios } from '../../services/PortfolioService';
+import { fetchTransactions, addTransaction, fetchPortfolio } from '../../services/PortfolioService';
 import { Transaction } from '../../types/Transaction';
 import {
   Tabs,
@@ -11,7 +11,7 @@ import {
   Tab,
   TabPanel,
 } from '../../components/molecules/Tabs';
-import StockTable, { Stock } from '../../components/organisms/StockTable';
+import StockTable from '../../components/organisms/StockTable';
 import TransactionsTable from '../../components/organisms/TransactionsTable';
 import LoadingSpinner from '../../components/atoms/LoadingSpinner';
 import AddTransactionForm from '../../components/organisms/AddTransactionForm';
@@ -19,6 +19,7 @@ import Button from '../../components/atoms/Button';
 import GenericModal from '../../components/organisms/GenericModal';
 import { TransactionDTO } from '../../dtos/TransactionDTO';
 import { Portfolio } from '../../types/Portfolio';
+import { Asset } from '../../types/Asset';
 
 const PortfolioDetails: React.FC = () => {
   const { portfolioId } = useParams<{ portfolioId: string }>();
@@ -30,12 +31,12 @@ const PortfolioDetails: React.FC = () => {
   const [modalContent, setModalContent] = useState<React.ReactNode>(null);
 
   useEffect(() => {
-    console.log('Portfolio ID:', portfolioId);
+    // console.log('Portfolio ID:', portfolioId);
 
     const loadPortfolio = async () => {
       try {
-        const portfolios = await getPortfolios(portfolioId || '');
-        const portfolioData = portfolios.find(p => p.id === portfolioId);
+        const portfolioData = await fetchPortfolio(portfolioId || '');
+        console.log('Loaded Portfolio Data:', portfolioData);
         setPortfolio(portfolioData || null);
         setLoading(false);
       } catch (error) {
@@ -51,6 +52,7 @@ const PortfolioDetails: React.FC = () => {
   useEffect(() => {
     const loadTransactions = async () => {
       if (portfolio) {
+        console.log('Loading transactions for portfolio:', portfolio);
         try {
           const portfolioTransactions = await fetchTransactions(portfolio.id ? String(portfolio.id) : '');
           setTransactions(portfolioTransactions);
@@ -67,16 +69,25 @@ const PortfolioDetails: React.FC = () => {
   }, [portfolio]);
 
   const handleTransactionAdded = async (newTransactionDTO: TransactionDTO) => {
+    if (!portfolio) {
+      return;
+    }
+
     try {
-      const newTransaction = await addTransaction(portfolio?.id || '', newTransactionDTO);
-      setTransactions([...transactions, newTransaction]);
+      const transactionsData = await fetchTransactions(portfolio?.id ? String(portfolio.id) : '');
+      setTransactions(transactionsData);
+
+      // Reload the portfolio to update the holdings
+      const updatedPortfolio = await fetchPortfolio(portfolio.id ? String(portfolio.id) : '');
+      setPortfolio(updatedPortfolio || null);
+
     } catch (error) {
       console.error('Error adding transaction:', error);
     }
   };
 
-  const handleEditStock = (stock: Stock) => {
-    console.log('Edit stock:', stock);
+  const handleEditStock = (stock: Asset) => {
+      console.log('Edit stock:', stock);
   };
 
   if (loading) {
@@ -86,8 +97,6 @@ const PortfolioDetails: React.FC = () => {
   if (!portfolio) {
     return <div>Portfolio not found</div>;
   }
-
-  console.log('Portfolio', portfolio);
 
   return (
     <div className='container mx-auto px-4 py-6'>
@@ -148,6 +157,7 @@ const PortfolioDetails: React.FC = () => {
                   }}
                 />
               </header>
+              
               <StockTable
                 stocks={
                   portfolio.assets
@@ -155,8 +165,9 @@ const PortfolioDetails: React.FC = () => {
                         id: stock.id,
                         name: stock.name,
                         symbol: stock.symbol,
-                        allocation: 0,
-                        purchasePrice: stock.purchasePrice,
+                        shares: stock.shares,
+                        allocation: stock.shares,
+                        purchasePrice: stock.purchase_price,
                         currency: stock.currency,
                         portfolioId: stock.portfolioId,
                         userId: stock.userId,

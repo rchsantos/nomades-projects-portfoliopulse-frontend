@@ -38,6 +38,7 @@ const AddPortfolio: React.FC<AddPortfolioProps> = ({ onPortfolioAdded, onClosed 
         id: ticker,
         name: ticker,
         symbol: ticker,
+        shares: 0, // Add the missing shares property
         allocation: 0,
         purchasePrice: 0,
         currency: currency,

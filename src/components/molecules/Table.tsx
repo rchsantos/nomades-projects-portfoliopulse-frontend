@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 interface Column<T> {
   header: string;
-  accessor: keyof T;
+  accessor?: keyof T;
   icon?: IconDefinition;
   onIconClick?: (item: T) => void;
 }
@@ -34,7 +34,7 @@ export const Table = <T,>({ columns, data }: TableProps<T>) => {
             <tr key={index} className='bg-white border-b bg-transparent dark:border-global-color-secondary hover:bg-global-color-primary darck:hover:bg-global-color-primary'>
               {columns.map((column) => (
                 <td key={column.accessor as string} className="px-4 py-2">
-                  <span>{String(item[column.accessor])}</span>
+                  <span>{column.accessor ? String(item[column.accessor]) : ''}</span>
                   {column.icon && column.onIconClick && (
                     <FontAwesomeIcon
                       icon={column.icon}

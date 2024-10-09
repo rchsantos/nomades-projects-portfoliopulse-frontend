@@ -8,7 +8,7 @@ interface TransactionsTableProps {
 
 const TransactionsTable: React.FC<TransactionsTableProps> = ({ transactions }) => {
 
-  console.log('transactions', transactions);
+  // console.log('transactions', transactions);
   const formattedTransactions = transactions.map(transaction => ({
     ...transaction,
     date: new Date(transaction.date).toLocaleDateString('en-GB'),

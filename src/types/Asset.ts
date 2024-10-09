@@ -7,4 +7,5 @@ export interface Asset {
   purchasePrice: number;
   currency: string;
   userId?: string;
+  allocation?: number;
 }
