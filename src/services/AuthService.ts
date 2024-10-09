@@ -20,7 +20,6 @@ export interface RegisterResponse {
 }
 
 export async function register(data: RegisterData): Promise<RegisterResponse> {
-  console.log('Original Data:', data);
 
   // Map the User entity to RegisterRequestDTO
   const registerRequestDTO = UserMapper.toRegisterRequestDTO({
@@ -29,8 +28,6 @@ export async function register(data: RegisterData): Promise<RegisterResponse> {
     role: data.role || '',
     isActive: data.isActive !== undefined ? data.isActive : true,
   });
-
-  console.log('Mapped RegisterRequestDTO:', registerRequestDTO); 
 
   const response = await fetch(
     `${apiUrl}/register`, 

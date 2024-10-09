@@ -72,7 +72,7 @@ export const addPortfolio = async (portfolioDTO: PortfolioDTO): Promise<Portfoli
   const response = await fetch(`${process.env.REACT_APP_API_URL}/portfolio`, {
     method: 'POST',
     headers: {
-      'Authorization': `${localStorage.getItem('tokenType')} ${localStorage.getItem('token')}`,
+      'Authorization': `${localStorage.getItem('tokenType')} ${localStorage.getItem('accessToken')}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(portfolioDTO),
