@@ -3,7 +3,7 @@ import React from 'react';
 // import { Link } from 'react-router-dom';
 import PortfolioCard from '../molecules/PortfolioCard';
 import { Link } from 'react-router-dom';
-import { Portfolio } from '../../services/PortfolioService';
+import { Portfolio } from '../../types/Portfolio';
 
 interface PortfolioListProps {
 //   loading: boolean;
@@ -18,8 +18,8 @@ const PortfolioTable: React.FC<PortfolioListProps> = ({ portfolios }) => {
           <PortfolioCard 
           key={portfolio.name}
           name={portfolio.name}
-          value={portfolio.value || 0}
-          gain={portfolio.gain || 0}  
+          value={portfolio.totalValue || 0}
+          gain={portfolio.totalReturn || 0}  
           portfolioId={portfolio.id?.toString() || ''}
           />  
       ))}

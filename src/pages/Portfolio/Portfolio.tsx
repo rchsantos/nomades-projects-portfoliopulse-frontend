@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-// import { Link } from 'react-router-dom';
-import { getPortfolios, Portfolio } from '../../services/PortfolioService';
+import { getPortfolios } from '../../services/PortfolioService';
+import { Portfolio } from '../../types/Portfolio';
 
 // Components : Atoms
 import Button from '../../components/atoms/Button';
-// import Select from '../../components/atoms/Select';
 
 // Components : Organisms
 import GenericModal from '../../components/organisms/GenericModal';
@@ -47,7 +46,7 @@ const Portfolios: React.FC = () => {
         </h1>
         <Button
           type='button'
-          label='Add My Portfolio'
+          label='Add Portfolio'
           className='bg-global-color-primary text-dark-gunmetal py-2 px-4 rounded'
           onClick={() => {
             setModalContent(
@@ -60,7 +59,6 @@ const Portfolios: React.FC = () => {
           }}
         />
       </header>
-      {/* <AddPortfolio /> */}
 
       {/* If no portfolios founded a sample message for create one */}
       {portfolios.length === 0 && (

@@ -16,7 +16,7 @@ interface TableProps<T> {
 
 export const Table = <T,>({ columns, data }: TableProps<T>) => {
 
-  console.log('columns', columns);
+  // console.log('columns', columns);
 
   return (
     <div className='overflow-x-auto'>
@@ -30,7 +30,7 @@ export const Table = <T,>({ columns, data }: TableProps<T>) => {
         </thead>
         <tbody>
         {data.map((item, index) => (
-          console.log('item', item),
+          // console.log('item', item),
             <tr key={index} className='bg-white border-b bg-transparent dark:border-global-color-secondary hover:bg-global-color-primary darck:hover:bg-global-color-primary'>
               {columns.map((column) => (
                 <td key={column.accessor as string} className="px-4 py-2">
@@ -51,28 +51,3 @@ export const Table = <T,>({ columns, data }: TableProps<T>) => {
     </div>
   );
 };
-
-  // return (
-  //   <div className='overflow-x-auto'>
-  //     <table className='min-w-full bg-white text-dark-gunmetal border-dark-gunmetal text-left  mt-4 mb-4'>
-  //       <thead className='bg-global-color-primary opacity:30 border-dark-gunmetal'>
-  //         <tr>
-  //           <th className="px-4 py-2">Symbol</th>
-  //           <th className="px-4 py-2">Name</th>
-  //           <th className="px-4 py-2">purchase Price</th>
-  //           <th className="px-4 py-2">Allocation</th>
-  //         </tr>
-  //       </thead>
-  //       <tbody>
-  //         {stocks.map((stock: Stock) => (
-  //           <tr key={stock.id} className='bg-white border-b bg-transparent dark:border-global-color-secondary hover:bg-global-color-primary dark:hover:bg-global-color-primary'>
-  //             <td className="px-4 py-2">{stock.symbol}</td>
-  //             <td className="px-4 py-2">{stock.name}</td>
-  //             <td className="px-4 py-2">{stock.purchasePrice.toFixed(2)}</td>
-  //             <td className="px-4 py-2">{stock.allocation}</td>
-  //           </tr>
-  //         ))}
-  //       </tbody>
-  //     </table>
-  //   </div>
-  // );
