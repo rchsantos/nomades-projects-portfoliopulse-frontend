@@ -1,32 +1,43 @@
-// Imports principaux de l'application
+// Import the necessary libraries
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import './App.css';
 
-// Importer les composants
-import Header from './components/Header';
-// import ProtectedRoutes from './components/ProtectedRoutes';
+// Import the components
+import Header from './components/organisms/Header';
+import Footer from './components/organisms/Footer';
 
-// Importer les pages
-import Home from './pages/Home';
-import Login from './pages/Login';
-import Register from './pages/Register';
-
-// Importer le contexte
-import { AuthProvider } from './context/AuthContext';
+// Import the pages
+import HomePage from './pages/Homepage';
+import Register from './pages/Auth/Register';
+import Login from './pages/Auth/Login';
+import Portfolios from './pages/Portfolio/Portfolio';
+import PortfolioDetails from './pages/Portfolio/PortfolioDetails';
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <Header />
+    <Router>
+      <Main />
+    </Router>
+  );
+}
+
+function Main() {
+  const location = useLocation();
+  const hideElements = location.pathname === '/login' || location.pathname === '/register';
+
+  return (
+    <div className="App">
+        {!hideElements && <Header />}
         <Routes>
-          <Route path="/" element={<h1>Bienvenue sur PortfolioPulse</h1>} />
-          <Route path='/login' element={<Login />} />
+          <Route path="/" element={<HomePage />} />
+          <Route path="/portfolio" element={<Portfolios />} />
+          <Route path="/portfolio/:portfolioId" element={<PortfolioDetails />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
         </Routes>
-      </Router>
-    </AuthProvider>
+        {!hideElements && <Footer />}
+      </div>
   );
 }
 
