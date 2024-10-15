@@ -8,10 +8,12 @@ RUN yarn install
 
 COPY . .
 
-RUN yarn build
+# RUN yarn build
 
-RUN yarn global add serve
+# RUN yarn global add serve
 
-CMD ["serve", "-s", "build"]
+# CMD ["serve", "-s", "build"]
 
 EXPOSE 3000
+
+CMD ["yarn", "start"]
