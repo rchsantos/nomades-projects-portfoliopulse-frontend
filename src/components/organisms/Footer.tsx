@@ -4,7 +4,7 @@ const year = new Date().getFullYear();
 
 const Footer: React.FC = () => {
   return (
-    <footer className="bg-dark-gunmetal py-6 text-center text-white">
+    <footer className="bg-dark-gunmetal p-6 text-center text-white w-full">
       <div className="container mx-auto">
         <p className="text-sm">&copy; {year} PortfolioPulse. All rights reserved.</p>
         <ul className="flex justify-center space-x-4 mt-4">
