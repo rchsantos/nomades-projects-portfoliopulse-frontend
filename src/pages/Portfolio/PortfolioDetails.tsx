@@ -58,9 +58,17 @@ const PortfolioDetails: React.FC = () => {
       if (portfolio) {
         try {
           const assetsData = await fetchAllAssets(portfolio.id ? String(portfolio.id) : '');
-          
-          portfolio.assets = assetsData;
           console.log('Loaded Assets Data:', assetsData);
+          // @ts-ignore
+          // setPortfolio((prevPortfolio) => {
+          //   if (prevPortfolio) {
+          //     return {
+          //       ...prevPortfolio,
+          //       assets: assetsData,
+          //     };
+          //   }
+          //   return prevPortfolio;
+          // });
           setAssets(assetsData);
           setLoading(false);
         } catch (error) {
@@ -213,7 +221,7 @@ const PortfolioDetails: React.FC = () => {
                 <div className="flex justify-start items-center mb-4">
                   <h2 className="text-2xl font-semibold">Holdings</h2>
                   <div className="bg-global-color-primary text-dark-gunmetal rounded-full ml-4 px-3 py-1">
-                    {portfolio.assets ? portfolio.assets.length : 0}
+                    {assets ? assets.length : 0}
                   </div>
                 </div>
                 <Button
@@ -234,8 +242,7 @@ const PortfolioDetails: React.FC = () => {
               
               <StockTable
                 stocks={
-                  portfolio.assets
-                    ? portfolio.assets.map((stock: any) => ({
+                  assets ? assets.map((stock: any) => ({
                         id: stock.id,
                         name: stock.name,
                         symbol: stock.symbol,
