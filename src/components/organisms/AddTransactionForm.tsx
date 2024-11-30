@@ -60,7 +60,7 @@ const AddTransactionForm: React.FC<AddTransactionFormProps> = ({ portfolioId, on
       </p>
       <form 
         onSubmit={handleSubmit}
-        className="p-4 flex flex-col justify-start rounded shadow-md"
+        className="flex flex-col justify-start rounded"
         >
         <div className='mb-4'>
           <label 

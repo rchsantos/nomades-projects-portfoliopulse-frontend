@@ -21,11 +21,13 @@ import { TransactionDTO } from '../../dtos/TransactionDTO';
 import { Portfolio } from '../../types/Portfolio';
 import { Asset } from '../../types/Asset';
 import { formatCurrency, formatPercentage } from '../../utils/format';
+import { fetchAllAssets } from "../../services/AssetService";
 
 const PortfolioDetails: React.FC = () => {
   const { portfolioId } = useParams<{ portfolioId: string }>();
   const [portfolio, setPortfolio] = useState<Portfolio | null>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [assets, setAssets] = useState<Asset[]>([]);
   const [activeTab, setActiveTab] = useState<string>('Holdings');
   const [loading, setLoading] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -35,8 +37,6 @@ const PortfolioDetails: React.FC = () => {
   const [returnPercentage, setReturnPercentage] = useState<string>('');
 
   useEffect(() => {
-    // console.log('Portfolio ID:', portfolioId);
-
     const loadPortfolio = async () => {
       try {
         const portfolioData = await fetchPortfolio(portfolioId || '');
@@ -52,6 +52,28 @@ const PortfolioDetails: React.FC = () => {
       loadPortfolio();
     }
   }, [portfolioId]);
+
+  useEffect(() => {
+    const loadAssets = async () => {
+      if (portfolio) {
+        try {
+          const assetsData = await fetchAllAssets(portfolio.id ? String(portfolio.id) : '');
+          
+          portfolio.assets = assetsData;
+          console.log('Loaded Assets Data:', assetsData);
+          setAssets(assetsData);
+          setLoading(false);
+        } catch (error) {
+          console.error('Error loading assets:', error);
+        }
+      }
+    }
+    
+    if (portfolio) {
+      loadAssets();
+    }
+      
+  }, [portfolio]);
 
   useEffect(() => {
     const loadTransactions = async () => {
@@ -174,7 +196,7 @@ const PortfolioDetails: React.FC = () => {
                   </span>
                 </div>
                 <div className='flex flex-col mb-4'>
-                  <span className={`text-${returnPercentage.startsWith('+') ? 'global-color-secondary' : 'danger'} text-2xl font-black`}>
+                  <span className={`text-${returnPercentage.startsWith('+') ? 'global-color-secondary' : 'ruby-red'} text-2xl font-black`}>
                     {returnPercentage}
                   </span>
                   <span className='font-semibold text-gray-600'>
@@ -217,12 +239,6 @@ const PortfolioDetails: React.FC = () => {
                         id: stock.id,
                         name: stock.name,
                         symbol: stock.symbol,
-                        shares: stock.shares,
-                        allocation: stock.shares,
-                        purchasePrice: stock.purchase_price,
-                        currency: stock.currency,
-                        portfolioId: stock.portfolioId,
-                        userId: stock.userId,
                         logo: '',
                       }))
                     : []

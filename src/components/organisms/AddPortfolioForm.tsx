@@ -66,10 +66,10 @@ const AddPortfolio: React.FC<AddPortfolioProps> = ({ onPortfolioAdded, onClosed 
 
   return (
     <div className='flex flex-col bg-white text-dark-gunmetal'>
-      <p className='p-4'>
+      <p>
       Add your holdings information such as average prices and number of shares. Support for transactions will be available soon.
       </p>
-      <form onSubmit={handleSubmit} className="p-4 flex flex-col justify-start rounded shadow-md">
+      <form onSubmit={handleSubmit} className="p-4 flex flex-col justify-start rounded">
         <div className="mb-4">
           <label htmlFor="name" className="text-sm font-medium text-dark-gunmetal">Portfolio Name</label>
           <input

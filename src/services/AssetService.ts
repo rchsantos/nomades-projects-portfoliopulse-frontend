@@ -2,16 +2,16 @@ import { AssetDTO, AssetResponseDTO } from '../dtos/AssetDTO';
 import { AssetMapper } from '../mappers/AssetMapper';
 import { Asset } from '../types/Asset';
 
-// Get all Assets
-export const getAssets = async (portfolioId: string): Promise<Asset[]> => {
-  const response = await fetch(`${process.env.REACT_APP_API_URL}/assets?portfolioId=${portfolioId}`, {
+// Get all Assets for a Portfolio
+export const fetchAllAssets = async (portfolioId: string): Promise<Asset[]> => {
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/portfolio/${portfolioId}/assets`, {
     method: 'GET',
     headers: {
-      'Authorization': `${localStorage.getItem('tokenType')} ${localStorage.getItem('token')}`,
+      'Authorization': `${localStorage.getItem('tokenType')} ${localStorage.getItem('accessToken')}`,
       'Content-Type': 'application/json',
     },
   });
-
+  console.log('Response Asset => ', response);
   const data: AssetResponseDTO[] = await response.json();
   return data.map(AssetMapper.toAsset);
 };
@@ -21,7 +21,7 @@ export const addAsset = async (assetDTO: AssetDTO): Promise<Asset> => {
   const response = await fetch(`${process.env.REACT_APP_API_URL}/assets`, {
     method: 'POST',
     headers: {
-      'Authorization': `${localStorage.getItem('tokenType')} ${localStorage.getItem('token')}`,
+      'Authorization': `${localStorage.getItem('tokenType')} ${localStorage.getItem('accessToken')}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(assetDTO),
@@ -36,7 +36,7 @@ export const updateAsset = async (assetDTO: AssetDTO): Promise<Asset> => {
   const response = await fetch(`${process.env.REACT_APP_API_URL}/assets/${assetDTO.id}`, {
     method: 'PUT',
     headers: {
-      'Authorization': `${localStorage.getItem('tokenType')} ${localStorage.getItem('token')}`,
+      'Authorization': `${localStorage.getItem('tokenType')} ${localStorage.getItem('accessToken')}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(assetDTO),
@@ -51,7 +51,7 @@ export const deleteAsset = async (assetId: string): Promise<void> => {
   await fetch(`${process.env.REACT_APP_API_URL}/assets/${assetId}`, {
     method: 'DELETE',
     headers: {
-      'Authorization': `${localStorage.getItem('tokenType')} ${localStorage.getItem('token')}`,
+      'Authorization': `${localStorage.getItem('tokenType')} ${localStorage.getItem('accessToken')}`,
       'Content-Type': 'application/json',
     },
   });
