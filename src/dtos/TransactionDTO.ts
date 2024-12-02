@@ -1,17 +1,18 @@
 export interface TransactionResponseDTO {
   id: string;
   symbol: string;
-  operation: string;
+  transaction_type: string;
   shares: number;
-  price: number;
+  price_per_share: number;
   currency: string;
-  date: Date;
+  created_at: Date;
   portfolio_id: string;
   user_id: string | null;
   asset_id: string | null;
   fee_tax: number;
   notes: string | null;
   name: string | null;
+  total_value: number;
 }
 
 export interface TransactionDTO {
@@ -20,9 +21,10 @@ export interface TransactionDTO {
   symbol: string;
   date: string;
   shares: number;
-  price: number;
+  pricePerShare: number;
   currency: string;
-  fee_tax: number;
+  feeTax: number;
   note: string;
   portfolio_id: string;
+  totalValue: number;
 }

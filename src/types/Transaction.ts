@@ -4,12 +4,13 @@ export interface Transaction {
   name: string;
   symbol: string;
   shares: number;
-  price: number;
+  pricePerShare: number;
   operation: string;
   currency: string;
-  fee_tax: number;
+  feeTax: number;
   note: string;
   portfolioId: string;
   userId: string | null;
   assetId: string | null;
+  totalValue: number;
 }

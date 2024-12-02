@@ -12,16 +12,17 @@ interface AddTransactionFormProps {
 
 const AddTransactionForm: React.FC<AddTransactionFormProps> = ({ portfolioId, onTransactionAdded, onClosed }) => {
   const [transaction, setTransaction] = useState<TransactionDTO>({
+    totalValue: 0,
     operation: '',
     name: '',
     symbol: '',
     date: '',
     shares: 0,
-    price: 0,
+    pricePerShare: 0,
     currency: '',
-    fee_tax: 0,
+    feeTax: 0,
     note: '',
-    portfolio_id: portfolioId,
+    portfolio_id: portfolioId
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -42,7 +43,7 @@ const AddTransactionForm: React.FC<AddTransactionFormProps> = ({ portfolioId, on
     transaction.portfolio_id = portfolioId;
     const formattedTransaction = {
       ...transaction,
-      date: moment(transaction.date).toISOString() // Ensure date is a string
+      date: moment(transaction.date).toISOString(), // Ensure date is a string
     };
     addTransaction(portfolioId, formattedTransaction).then((newTransaction) => {
       onTransactionAdded({
@@ -156,7 +157,7 @@ const AddTransactionForm: React.FC<AddTransactionFormProps> = ({ portfolioId, on
           <input 
             type="number" 
             name="price" 
-            value={transaction.price}
+            value={transaction.pricePerShare}
             placeholder="This is the price per share"
             onChange={handleChange} 
             className='mt-1 p-2 border border-gray-300 rounded w-full'
@@ -189,7 +190,7 @@ const AddTransactionForm: React.FC<AddTransactionFormProps> = ({ portfolioId, on
           <input 
             type="number" 
             name="fee_tax" 
-            value={transaction.fee_tax} 
+            value={transaction.feeTax} 
             placeholder="This is the fee or tax"
             onChange={handleChange} 
             className='mt-1 p-2 border border-gray-300 rounded w-full'

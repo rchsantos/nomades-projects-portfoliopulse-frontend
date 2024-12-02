@@ -40,11 +40,11 @@ const PortfolioDetails: React.FC = () => {
     const loadPortfolio = async () => {
       try {
         const portfolioData = await fetchPortfolio(portfolioId || '');
-        console.log('Loaded Portfolio Data:', portfolioData);
+        console.log('Loaded Portfolio Data:', portfolioData);  // @todo: Remove this
         setPortfolio(portfolioData || null);
         setLoading(false);
       } catch (error) {
-        console.error('Error loading portfolio:', error);
+        console.error('Error loading portfolio:', error);  // @todo: Remove this
       }
     };
 
@@ -58,21 +58,11 @@ const PortfolioDetails: React.FC = () => {
       if (portfolio) {
         try {
           const assetsData = await fetchAllAssets(portfolio.id ? String(portfolio.id) : '');
-          console.log('Loaded Assets Data:', assetsData);
-          // @ts-ignore
-          // setPortfolio((prevPortfolio) => {
-          //   if (prevPortfolio) {
-          //     return {
-          //       ...prevPortfolio,
-          //       assets: assetsData,
-          //     };
-          //   }
-          //   return prevPortfolio;
-          // });
+          console.log('Loaded Assets Data:', assetsData); // @todo: Remove this
           setAssets(assetsData);
           setLoading(false);
         } catch (error) {
-          console.error('Error loading assets:', error);
+          console.error('Error loading assets:', error);  // @todo: Remove this
         }
       }
     }
@@ -89,10 +79,13 @@ const PortfolioDetails: React.FC = () => {
         console.log('Loading transactions for portfolio:', portfolio);
         try {
           const portfolioTransactions = await fetchTransactions(portfolio.id ? String(portfolio.id) : '');
+          console.log('Loaded transactions from portfolio:', portfolioTransactions);  // @todo: Remove this
           setTransactions(portfolioTransactions);
           setLoading(false);
+          
+          console.log('Loaded transactions:', portfolioTransactions);  // @todo: Remove this
         } catch (error) {
-          console.error('Error loading transactions:', error);
+          console.error('Error loading transactions:', error);  // @todo: Remove this
         }
       }
     };
@@ -111,7 +104,7 @@ const PortfolioDetails: React.FC = () => {
           setTotalValue(formatCurrency(totalValues.total_value));
           setReturnPercentage(formatPercentage(totalValues.return_percentage));
         } catch (error) {
-          console.error('Error loading total values:', error);
+          console.error('Error loading total values:', error);  // @todo: Remove this
         }
       }
     };
@@ -125,7 +118,6 @@ const PortfolioDetails: React.FC = () => {
     if (!portfolio) {
       return;
     }
-
     try {
       const transactionsData = await fetchTransactions(portfolio?.id ? String(portfolio.id) : '');
       setTransactions(transactionsData);
@@ -135,13 +127,22 @@ const PortfolioDetails: React.FC = () => {
       setPortfolio(updatedPortfolio || null);
 
     } catch (error) {
-      console.error('Error adding transaction:', error);
+      console.error('Error adding transaction:', error);  // @todo: Remove this
     }
   };
 
   const handleEditStock = (stock: Asset) => {
-      console.log('Edit stock:', stock);
+      console.log('Edit stock:', stock);  // @todo: Remove this
   };
+  
+  // Load the stock data from the API
+  const loadStockData = async (id: string) => {
+    try {
+      
+    } catch (error) {
+      console.error('Error loading stock data:', error);  // @todo: Remove this
+    }
+  }
 
   if (loading) {
     return <LoadingSpinner />;

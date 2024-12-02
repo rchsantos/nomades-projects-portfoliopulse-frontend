@@ -125,11 +125,10 @@ export const fetchPortfolioStocks = async (portfolioId: string): Promise<StockDa
 };
 
 export const fetchTransactions = async (portfolioId: string): Promise<Transaction[]> => {
+  
   if (!portfolioId) {
     throw new Error('Portfolio ID is required');
   }
-
-  console.log('Fetching transactions for portfolio ID:', portfolioId);
 
   const tokenType = localStorage.getItem('tokenType');
   const accessToken = localStorage.getItem('accessToken');
@@ -151,16 +150,27 @@ export const fetchTransactions = async (portfolioId: string): Promise<Transactio
     }
 
     const transactionResponseDTOs: TransactionResponseDTO[] = response.data;
-    console.log('Transaction Response DTOs:', transactionResponseDTOs);
-    return transactionResponseDTOs.map(TransactionMapper.toTransaction);
+
+    // Fetch the symbol for each transaction if not present
+    return await Promise.all(transactionResponseDTOs.map(async (transaction) => {
+      if (!transaction.symbol && transaction.asset_id) {
+        const assetResponse = await axios.get(`${process.env.REACT_APP_API_URL}/portfolio/${portfolioId}/assets/${transaction.asset_id}`, {
+          headers: {
+            'Authorization': `${tokenType} ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        transaction.symbol = assetResponse.data.symbol;
+      }
+      return TransactionMapper.toTransaction(transaction);
+    }));
   } catch (error) {
-    console.error('Error fetching transactions:', error);
+    console.error('Error fetching transactions:', error); // @TODO: Remove this log
     throw error;
   }
 };
 
 export const addTransaction = async (portfolio_id: string, transactionDTO: TransactionDTO): Promise<Transaction> => {
-  // console.log('Portfolio ID : ', portfolio_id);
   
   if (!portfolio_id) {
     throw new Error('Portfolio ID is required');

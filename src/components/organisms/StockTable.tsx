@@ -15,9 +15,6 @@ const StockTable: React.FC<StockTableProps> = ({ stocks, onEdit }) => {
     { header: '', accessor: 'id', icon: faEllipsisVertical, onIconClick: onEdit },
   ];
 
-  console.log('columns', columns);
-  console.log('stocks', stocks);
-
   return <Table columns={columns} data={stocks} />;
 };
 

@@ -1,3 +1,4 @@
+import { Button } from '@headlessui/react';
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchTotalValues } from '../../services/PortfolioService';
@@ -29,7 +30,7 @@ const PortfolioCard: React.FC<PortfolioCardProps> = ({ name, value, gain, portfo
   }, [portfolioId]);
 
   return (
-    <div className="flex flex-col justify-betweew bg-white rounded-lg shadow-md p-6">
+    <div className="flex flex-col justify-betweew bg-global-color-primary rounded-lg shadow-md p-6">
       <h2 className='pb-2 text-dark-gunmetal font-extrabold'>
         {name}
       </h2>
@@ -43,10 +44,9 @@ const PortfolioCard: React.FC<PortfolioCardProps> = ({ name, value, gain, portfo
          {totalReturn}
         </span>
       </p>
-
       <Link 
         to={`/portfolio/${portfolioId}`}
-        className='text-global-color-secondary pt-4 text-right hover:text-global-color-primary'
+        className='text-global-color-secondary pt-4 text-right font-semibold'
       >
         View Details
       </Link>
