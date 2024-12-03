@@ -9,11 +9,11 @@ export class TransactionMapper {
     console.log('To Transaction: ', transactionResponseDTO.symbol);
     return {
       id: transactionResponseDTO.id,
-      date: moment(transactionResponseDTO.created_at).toDate(),
+      createdAt: moment(transactionResponseDTO.created_at).format('DD-MM-YYYY'),
       name: transactionResponseDTO.name ?? '',
       symbol: transactionResponseDTO.symbol,
       shares: transactionResponseDTO.shares,
-      pricePerShare: transactionResponseDTO.price_per_share,
+      pricePerShare: transactionResponseDTO.price_per_share.toString(),
       operation: transactionResponseDTO.transaction_type,
       currency: transactionResponseDTO.currency,
       feeTax: transactionResponseDTO.fee_tax,
@@ -21,20 +21,20 @@ export class TransactionMapper {
       portfolioId: transactionResponseDTO.portfolio_id,
       userId: transactionResponseDTO.user_id,
       assetId: transactionResponseDTO.asset_id,
-      totalValue: transactionResponseDTO.total_value,
+      totalValue: transactionResponseDTO.total_value.toString(),
     };
   }
 
   static toTransactionResponseDTO(transaction: Transaction): TransactionResponseDTO {
     return {
-      total_value: transaction.totalValue,
+      total_value: parseFloat(transaction.totalValue),
       id: transaction.id,
       symbol: transaction.symbol,
       transaction_type: transaction.operation,
       shares: transaction.shares,
-      price_per_share: transaction.pricePerShare,
+      price_per_share: parseFloat(transaction.pricePerShare),
       currency: transaction.currency,
-      created_at: transaction.date,
+      created_at: moment(transaction.createdAt).toDate(),
       portfolio_id: transaction.portfolioId,
       user_id: transaction.userId,
       asset_id: transaction.assetId,
@@ -46,11 +46,12 @@ export class TransactionMapper {
 
   static toTransactionDTO(transaction: Transaction): TransactionDTO {
     return {
+      id: transaction.id,
       totalValue: transaction.totalValue,
       operation: transaction.operation,
       name: transaction.name,
       symbol: transaction.symbol,
-      date: moment(transaction.date).toISOString(),
+      createdAt: transaction.createdAt,
       shares: transaction.shares,
       pricePerShare: transaction.pricePerShare,
       currency: transaction.currency,

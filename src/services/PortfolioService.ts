@@ -230,3 +230,8 @@ export const fetchTotalValues = async (portfolioId: string): Promise<TotalValueR
     throw error;
   }
 };
+
+export const updateTransaction = async (transaction: TransactionDTO): Promise<TransactionResponseDTO> => {
+  const response = await axios.put(`${process.env.REACT_APP_API_URL}/transactions/${transaction.id}`, transaction);
+  return response.data;
+};

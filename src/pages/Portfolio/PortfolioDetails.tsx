@@ -22,6 +22,7 @@ import { Portfolio } from '../../types/Portfolio';
 import { Asset } from '../../types/Asset';
 import { formatCurrency, formatPercentage } from '../../utils/format';
 import { fetchAllAssets } from "../../services/AssetService";
+import EditTransactionForm from "../../components/organisms/EditTransactionForm";
 
 const PortfolioDetails: React.FC = () => {
   const { portfolioId } = useParams<{ portfolioId: string }>();
@@ -130,6 +131,25 @@ const PortfolioDetails: React.FC = () => {
       console.error('Error adding transaction:', error);  // @todo: Remove this
     }
   };
+
+  const handleTransactionUpdated = async (updatedTransaction: Transaction) => {
+    const updatedTransactions = transactions.map(transaction =>
+      transaction.id === updatedTransaction.id ? updatedTransaction : transaction
+    );
+    setTransactions(updatedTransactions);
+  };
+  
+  const handleEditTransaction = (transaction: Transaction) => {
+    setModalContent(
+      <EditTransactionForm
+        transaction={transaction}
+        onTransactionUpdated={handleTransactionUpdated}
+        onClosed={() => setIsModalOpen(false)}
+      />
+    );
+    setIsModalOpen(true);
+  };
+
 
   const handleEditStock = (stock: Asset) => {
       console.log('Edit stock:', stock);  // @todo: Remove this
@@ -257,7 +277,18 @@ const PortfolioDetails: React.FC = () => {
             
             <section>
               <h2 className="text-2xl font-semibold mb-4">Transactions</h2>
-              <TransactionsTable transactions={transactions} />
+              <TransactionsTable 
+                transactions={transactions}
+                onEdit={handleEditTransaction} 
+              />
+              <GenericModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onOpen={() => setIsModalOpen(true)}
+                title='Add Transaction'
+              >
+                {modalContent}
+              </GenericModal>
             </section>
           </TabPanel>
 
@@ -294,16 +325,6 @@ const PortfolioDetails: React.FC = () => {
           </TabPanel>
         </TabsBody>
       </Tabs>
-
-      <GenericModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onOpen={() => setIsModalOpen(true)}
-        title='Add Transaction'
-      >
-        {modalContent}
-      </GenericModal>
-
     </div>
   );
 };

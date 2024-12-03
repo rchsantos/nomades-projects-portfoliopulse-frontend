@@ -15,10 +15,6 @@ interface TableProps<T> {
 }
 
 export const Table = <T,>({ columns, data }: TableProps<T>) => {
-
-  // console.log('columns', columns);
-  // console.log('data', data);
-
   return (
     <div className='overflow-x-auto'>
       <table className='min-w-full bg-white text-dark-gunmetal border-dark-gunmetal text-left mt-4 mb-4'>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import moment from 'moment';
+
 import Button from '../atoms/Button';
 import { TransactionDTO } from '../../dtos/TransactionDTO';
 import { addTransaction } from '../../services/PortfolioService';
@@ -12,13 +12,14 @@ interface AddTransactionFormProps {
 
 const AddTransactionForm: React.FC<AddTransactionFormProps> = ({ portfolioId, onTransactionAdded, onClosed }) => {
   const [transaction, setTransaction] = useState<TransactionDTO>({
-    totalValue: 0,
+    id: '',
+    totalValue: '',
     operation: '',
     name: '',
     symbol: '',
-    date: '',
+    createdAt: '',
     shares: 0,
-    pricePerShare: 0,
+    pricePerShare: '',
     currency: '',
     feeTax: 0,
     note: '',
@@ -39,15 +40,14 @@ const AddTransactionForm: React.FC<AddTransactionFormProps> = ({ portfolioId, on
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Transaction:', transaction);
     transaction.portfolio_id = portfolioId;
     const formattedTransaction = {
       ...transaction,
-      date: moment(transaction.date).toISOString(), // Ensure date is a string
+      pricePerShare: transaction.pricePerShare.toString(),
     };
     addTransaction(portfolioId, formattedTransaction).then((newTransaction) => {
       onTransactionAdded({
-        ...newTransaction, date: moment(newTransaction.date).toISOString(),
+        ...newTransaction,
         portfolio_id: ''
       });
       onClosed();
@@ -123,7 +123,7 @@ const AddTransactionForm: React.FC<AddTransactionFormProps> = ({ portfolioId, on
           <input 
             type="date" 
             name="date" 
-            value={transaction.date} 
+            value={transaction.createdAt} 
             placeholder="Select a date"
             onChange={handleChange}
             className='mt-1 p-2 border border-gray-300 rounded w-full'

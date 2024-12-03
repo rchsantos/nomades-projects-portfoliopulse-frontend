@@ -1,10 +1,10 @@
-export interface Transaction {
+export interface TransactionResponseDTO {
   id: string;
-  createdAt: string;
+  createdAt: Date;
   name: string;
   symbol: string;
   shares: number;
-  pricePerShare: string;
+  pricePerShare: number;
   operation: string;
   currency: string;
   feeTax: number;
@@ -12,5 +12,5 @@ export interface Transaction {
   portfolioId: string;
   userId: string | null;
   assetId: string | null;
-  totalValue: string;
+  totalValue: number;
 }

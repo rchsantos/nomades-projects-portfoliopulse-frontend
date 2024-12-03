@@ -16,15 +16,16 @@ export interface TransactionResponseDTO {
 }
 
 export interface TransactionDTO {
+  id: string;
   operation: string;
   name: string;
   symbol: string;
-  date: string;
+  createdAt: string;
   shares: number;
-  pricePerShare: number;
+  pricePerShare: string;
   currency: string;
   feeTax: number;
   note: string;
   portfolio_id: string;
-  totalValue: number;
+  totalValue: string;
 }
