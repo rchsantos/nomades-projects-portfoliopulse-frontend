@@ -2,7 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsisVertical, faArrowLeftLong } from '@fortawesome/free-solid-svg-icons';
-import { fetchTransactions, addTransaction, fetchTotalValues, fetchPortfolio } from '../../services/PortfolioService';
+import {
+  fetchTransactions,
+  addTransaction,
+  fetchTotalValues,
+  fetchPortfolio,
+  fetchPortfolioAnlysis
+} from "../../services/PortfolioService";
 import { Transaction } from '../../types/Transaction';
 import {
   Tabs,
@@ -11,7 +17,7 @@ import {
   Tab,
   TabPanel,
 } from '../../components/molecules/Tabs';
-import StockTable from '../../components/organisms/StockTable';
+import HoldingTable from '../../components/organisms/HoldingTable';
 import TransactionsTable from '../../components/organisms/TransactionsTable';
 import LoadingSpinner from '../../components/atoms/LoadingSpinner';
 import AddTransactionForm from '../../components/organisms/AddTransactionForm';
@@ -20,6 +26,7 @@ import GenericModal from '../../components/organisms/GenericModal';
 import { TransactionDTO } from '../../dtos/TransactionDTO';
 import { Portfolio } from '../../types/Portfolio';
 import { Asset } from '../../types/Asset';
+import { Holding } from "../../types/Holding";
 import { formatCurrency, formatPercentage } from '../../utils/format';
 import { fetchAllAssets } from "../../services/AssetService";
 import EditTransactionForm from "../../components/organisms/EditTransactionForm";
@@ -27,6 +34,7 @@ import EditTransactionForm from "../../components/organisms/EditTransactionForm"
 const PortfolioDetails: React.FC = () => {
   const { portfolioId } = useParams<{ portfolioId: string }>();
   const [portfolio, setPortfolio] = useState<Portfolio | null>(null);
+  const [holdings, setHoldings] = useState<Holding[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [assets, setAssets] = useState<Asset[]>([]);
   const [activeTab, setActiveTab] = useState<string>('Holdings');
@@ -54,6 +62,27 @@ const PortfolioDetails: React.FC = () => {
     }
   }, [portfolioId]);
 
+  // @TODO: Need to implement the logic to fetch the holdings data
+  useEffect(() => {
+    const loadHoldings = async () => {
+      if (portfolio) {
+        try {
+          const data = await fetchPortfolioAnlysis(portfolio.id ? String(portfolio.id) : '');
+          console.log('Loaded Holdings Data:', data.weights); // @todo: Remove this
+          setHoldings(data.weights);
+          setLoading(false);
+        } catch (error) {
+          console.error('Error loading holdings:', error);  // @todo: Remove this
+        }
+      }
+    }
+
+    if (portfolio) {
+      loadHoldings();
+    }
+    
+  }, [portfolio]);
+  
   useEffect(() => {
     const loadAssets = async () => {
       if (portfolio) {
@@ -96,24 +125,24 @@ const PortfolioDetails: React.FC = () => {
     }
   }, [portfolio]);
 
-  useEffect(() => {
-    const loadTotalValues = async () => {
-      if (portfolio) {
-        try {
-          const totalValues = await fetchTotalValues(portfolio.id ? String(portfolio.id) : '');
-          setTotalInvestment(formatCurrency(totalValues.total_investment));
-          setTotalValue(formatCurrency(totalValues.total_value));
-          setReturnPercentage(formatPercentage(totalValues.return_percentage));
-        } catch (error) {
-          console.error('Error loading total values:', error);  // @todo: Remove this
-        }
-      }
-    };
-
-    if (portfolio) {
-      loadTotalValues();
-    }
-  }, [portfolio]);
+  // useEffect(() => {
+  //   const loadTotalValues = async () => {
+  //     if (portfolio) {
+  //       try {
+  //         const totalValues = await fetchTotalValues(portfolio.id ? String(portfolio.id) : '');
+  //         setTotalInvestment(formatCurrency(totalValues.total_investment));
+  //         setTotalValue(formatCurrency(totalValues.total_value));
+  //         setReturnPercentage(formatPercentage(totalValues.return_percentage));
+  //       } catch (error) {
+  //         console.error('Error loading total values:', error);  // @todo: Remove this
+  //       }
+  //     }
+  //   };
+  //
+  //   if (portfolio) {
+  //     loadTotalValues();
+  //   }
+  // }, [portfolio]);
 
   const handleTransactionAdded = async (newTransactionDTO: TransactionDTO) => {
     if (!portfolio) {
@@ -148,11 +177,6 @@ const PortfolioDetails: React.FC = () => {
       />
     );
     setIsModalOpen(true);
-  };
-
-
-  const handleEditStock = (stock: Asset) => {
-      console.log('Edit stock:', stock);  // @todo: Remove this
   };
   
   // Load the stock data from the API
@@ -261,17 +285,8 @@ const PortfolioDetails: React.FC = () => {
                 />
               </header>
               
-              <StockTable
-                stocks={
-                  assets ? assets.map((stock: any) => ({
-                        id: stock.id,
-                        name: stock.name,
-                        symbol: stock.symbol,
-                        logo: '',
-                      }))
-                    : []
-                }
-                onEdit={handleEditStock}
+              <HoldingTable
+                holdings={holdings}
               />
             </section>
             

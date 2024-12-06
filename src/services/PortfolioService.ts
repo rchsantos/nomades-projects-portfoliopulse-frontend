@@ -69,17 +69,34 @@ export const fetchPortfolio = async (portfolioId: string): Promise<Portfolio | n
 
 // Add a new Portfolio
 export const addPortfolio = async (portfolioDTO: PortfolioDTO): Promise<Portfolio> => {
-  const response = await fetch(`${process.env.REACT_APP_API_URL}/portfolio`, {
-    method: 'POST',
-    headers: {
-      'Authorization': `${localStorage.getItem('tokenType')} ${localStorage.getItem('accessToken')}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(portfolioDTO),
-  });
+  try {
+    const response = await axios.post(`${process.env.REACT_APP_API_URL}/portfolio`, portfolioDTO, {
+      headers: {
+        'Authorization': `${localStorage.getItem('tokenType')} ${localStorage.getItem('accessToken')}`,
+        'Content-Type': 'application/json',
+      },
+    });
 
-  const data: PortfolioResponseDTO = await response.json();
-  return PortfolioMapper.toPortfolio(data);
+    if (response.status !== 201) {
+      throw new Error('Failed to add portfolio');
+    }
+
+    return response.data;
+  } catch (error) {
+    console.error('Error adding portfolio:', error);
+    throw error;
+  }
+  // const response = await fetch(`${process.env.REACT_APP_API_URL}/portfolio`, {
+  //   method: 'POST',
+  //   headers: {
+  //     'Authorization': `${localStorage.getItem('tokenType')} ${localStorage.getItem('accessToken')}`,
+  //     'Content-Type': 'application/json',
+  //   },
+  //   body: JSON.stringify(portfolioDTO),
+  // });
+  //
+  // const data: PortfolioResponseDTO = await response.json();
+  // return PortfolioMapper.toPortfolio(data);
 };
 
 // Update an existing Portfolio
@@ -123,6 +140,39 @@ export const fetchPortfolioStocks = async (portfolioId: string): Promise<StockDa
 
   return response.json();
 };
+
+export const fetchPortfolioAnlysis = async (portfolioId: string): Promise<any> => {
+  
+  if (!portfolioId) {
+    throw new Error('Portfolio ID is required');
+  }
+
+  const tokenType = localStorage.getItem('tokenType');
+  const accessToken = localStorage.getItem('accessToken');
+
+  if (!tokenType || !accessToken) {
+    throw new Error('Authorization token is missing');
+  }
+  
+  try {
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}/portfolio/${portfolioId}/analysis`, {
+      headers: {
+        'Authorization': `${tokenType} ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    });
+    
+    if (response.status !== 200) {
+      throw new Error('Failed to fetch portfolio analysis');
+    }
+    
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching portfolio analysis:', error);
+    throw error;
+  }
+  
+}
 
 export const fetchTransactions = async (portfolioId: string): Promise<Transaction[]> => {
   

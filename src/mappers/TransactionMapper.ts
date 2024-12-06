@@ -6,14 +6,13 @@ import { Transaction } from '../types/Transaction';
 export class TransactionMapper {
 
   static toTransaction(transactionResponseDTO: TransactionResponseDTO): Transaction {
-    console.log('To Transaction: ', transactionResponseDTO.symbol);
     return {
       id: transactionResponseDTO.id,
       createdAt: moment(transactionResponseDTO.created_at).format('DD-MM-YYYY'),
       name: transactionResponseDTO.name ?? '',
       symbol: transactionResponseDTO.symbol,
       shares: transactionResponseDTO.shares,
-      pricePerShare: transactionResponseDTO.price_per_share.toString(),
+      pricePerShare: transactionResponseDTO.price_per_share,
       operation: transactionResponseDTO.transaction_type,
       currency: transactionResponseDTO.currency,
       feeTax: transactionResponseDTO.fee_tax,
@@ -21,18 +20,18 @@ export class TransactionMapper {
       portfolioId: transactionResponseDTO.portfolio_id,
       userId: transactionResponseDTO.user_id,
       assetId: transactionResponseDTO.asset_id,
-      totalValue: transactionResponseDTO.total_value.toString(),
+      totalValue: transactionResponseDTO.total_value,
     };
   }
 
   static toTransactionResponseDTO(transaction: Transaction): TransactionResponseDTO {
     return {
-      total_value: parseFloat(transaction.totalValue),
+      total_value: transaction.totalValue,
       id: transaction.id,
       symbol: transaction.symbol,
       transaction_type: transaction.operation,
       shares: transaction.shares,
-      price_per_share: parseFloat(transaction.pricePerShare),
+      price_per_share: transaction.pricePerShare,
       currency: transaction.currency,
       created_at: moment(transaction.createdAt).toDate(),
       portfolio_id: transaction.portfolioId,

@@ -22,10 +22,10 @@ export interface TransactionDTO {
   symbol: string;
   createdAt: string;
   shares: number;
-  pricePerShare: string;
+  pricePerShare: number;
   currency: string;
   feeTax: number;
   note: string;
   portfolio_id: string;
-  totalValue: string;
+  totalValue: number;
 }

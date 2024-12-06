@@ -3,7 +3,7 @@ import React from 'react';
 const HomePage: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col">
-      <main className="flex-grow text-white">
+      <main className="flex-grow bg-floral-white text-white">
         <section className="flex flex-col items-center justify-center py-20 bg-dark-gunmetal">
           <h1 className="text-7xl font-extrabold">
             <span className="bg-gradient-to-r from-global-color-primary to-global-color-secondary text-transparent bg-clip-text">
@@ -16,7 +16,7 @@ const HomePage: React.FC = () => {
         </section>
 
         <div className='flex flex-col justify-center items-center p-20'>
-          <section className="flex flex-wrap items-center justify-center p-10 bg-white">
+          <section className="flex flex-wrap items-center justify-center p-10">
             <div className="max-w-md mx-4">
               <h3 className="text-2xl font-bold mb-4 text-neutral-strongest">Welcome to PortfolioPulse</h3>
               <p className="text-base text-neutral-strongest">The best way to track your investments and analyze your portfolio performance.</p>
@@ -28,7 +28,7 @@ const HomePage: React.FC = () => {
             </div>
           </section>
 
-          <section className="flex flex-wrap items-center justify-center p-10 bg-white">
+          <section className="flex flex-wrap items-center justify-center p-10">
             {/* Add sections for features or portfolio insights */}
             <div className="max-w-md mx-4">
               <h3 className="text-2xl font-bold mb-4 text-neutral-strongest">Track Your Investments</h3>
@@ -40,7 +40,7 @@ const HomePage: React.FC = () => {
               <p className="text-base text-neutral-strongest">Deep dive into the performance of each asset, understand trends, and make informed decisions.</p>
             </div>
           </section>
-          <section className='flex flex-wrap items-center justify-center p-10 bg-white'>
+          <section className='flex flex-wrap items-center justify-center p-10'>
             <button className="mt-6 bg-global-color-primary hover:bg-global-color-secondary text-black font-bold py-2 px-6 rounded">
               Get Started
             </button>

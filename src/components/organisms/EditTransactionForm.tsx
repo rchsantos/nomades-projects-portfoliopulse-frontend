@@ -55,6 +55,102 @@ const EditTransactionForm: React.FC<EditTransactionFormProps> = ({ transaction, 
   return (
     <div className='flex flex-col bg-white text-dark-gunmetal'>
       <form onSubmit={handleSubmit} className="flex flex-col justify-start rounded">
+        <div className='p-4'>
+          <p>
+            Enter details about your holdings, including the average price per share and the number of shares you own. Support for advanced transaction management features will be available soon.
+          </p>
+        </div>
+        <div className="mb-4">
+          <div className="mb-4">
+            <label htmlFor="symbol" className="text-sm font-medium text-dark-gunmetal">Symbol</label>
+            <input
+              type="text"
+              name="symbol"
+              value={updatedTransaction.symbol}
+              onChange={handleChange}
+              className="mt-1 p-2 border border-gray-300 rounded w-full"
+              required
+            />
+          </div>
+          <label htmlFor="name" className="text-sm font-medium text-dark-gunmetal">Name</label>
+          <input
+            type="text"
+            name="name"
+            value={updatedTransaction.name}
+            onChange={handleChange}
+            className="mt-1 p-2 border border-gray-300 rounded w-full"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="shares" className="text-sm font-medium text-dark-gunmetal">Shares</label>
+          <input
+            type="number"
+            name="shares"
+            value={updatedTransaction.shares}
+            onChange={handleChange}
+            className="mt-1 p-2 border border-gray-300 rounded w-full"
+            required
+          />
+        </div>
+        <div className='mb-4'>
+          <label htmlFor='pricePerShare' className='text-sm font-medium text-dark-gunmetal'>Price per share</label>
+          <input
+            type="number"
+            name="pricePerShare"
+            value={updatedTransaction.pricePerShare}
+            onChange={handleChange}
+            className='mt-1 p-2 border border-gray-300 rounded w-full'
+            required
+          />
+        </div>
+        {/* Add Total field, the total value has automaticaly and put the value in the field */}
+        <div className='mb-4'>
+          <label htmlFor='totalValue' className='text-sm font-medium text-dark-gunmetal'>Total Value</label>
+          <input
+            type="number"
+            name="totalValue"
+            value={updatedTransaction.totalValue}
+            onChange={handleChange}
+            className='mt-1 p-2 border border-gray-300 rounded w-full'
+            required
+            disabled
+          />
+        </div>
+        <div className='mb-4'>
+          <label htmlFor='operation' className='text-sm font-medium text-dark-gunmetal'>Operation</label>
+          <input
+            type="text"
+            name="operation"
+            value={updatedTransaction.operation}
+            onChange={handleChange}
+            className='mt-1 p-2 border border-gray-300 rounded w-full'
+            required
+          />
+        </div>
+        <div className='mb-4'>
+          <label htmlFor='currency' className='text-sm font-medium text-dark-gunmetal'>Currency</label>
+          <input
+            type="text"
+            name="currency"
+            value={updatedTransaction.currency}
+            onChange={handleChange}
+            className='mt-1 p-2 border border-gray-300 rounded w-full'
+            required
+          />
+        </div>
+        <div className='mb-4'>
+          <label htmlFor='feeTax' className='text-sm font-medium text-dark-gunmetal'>Fee Tax</label>
+          <input
+            type="number"
+            name="feeTax"
+            value={updatedTransaction.feeTax}
+            onChange={handleChange}
+            className='mt-1 p-2 border border-gray-300 rounded w-full'
+            required
+          />
+        </div>
+        
         <div className='mb-4'>
           <label htmlFor='date' className='text-sm font-medium text-dark-gunmetal'>Date</label>
           <input

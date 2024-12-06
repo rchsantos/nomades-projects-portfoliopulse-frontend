@@ -4,7 +4,7 @@ export interface Transaction {
   name: string;
   symbol: string;
   shares: number;
-  pricePerShare: string;
+  pricePerShare: number;
   operation: string;
   currency: string;
   feeTax: number;
@@ -12,5 +12,5 @@ export interface Transaction {
   portfolioId: string;
   userId: string | null;
   assetId: string | null;
-  totalValue: string;
+  totalValue: number;
 }
