@@ -1,11 +1,13 @@
 import axios from 'axios';
+// import yahooFinance from 'yahoo-finance2';
+
 import { TransactionDTO, TransactionResponseDTO } from '../dtos/TransactionDTO';
 import { TransactionMapper } from '../mappers/TransactionMapper';
 import { Transaction } from '../types/Transaction';
 import { PortfolioDTO, PortfolioResponseDTO } from '../dtos/PortfolioDTO';
 import { PortfolioMapper } from '../mappers/PortfolioMapper';
 import { Portfolio } from '../types/Portfolio';
-import { TotalValueResponse } from '../types/TotalValueResponse';
+// import { TotalValueResponse } from '../types/TotalValueResponse';
 
 // This interface is used to represent the stock data in the portfolio details.
 export interface StockData {
@@ -250,7 +252,75 @@ export const addTransaction = async (portfolio_id: string, transactionDTO: Trans
   return TransactionMapper.toTransaction(transactionResponseDTO);
 };
 
-export const fetchTotalValues = async (portfolioId: string): Promise<TotalValueResponse> => {
+// export const fetchTotalValues = async (portfolioId: string): Promise<TotalValueResponse> => {
+//   if (!portfolioId) {
+//     throw new Error('Portfolio ID is required');
+//   }
+//
+//   const tokenType = localStorage.getItem('tokenType');
+//   const accessToken = localStorage.getItem('accessToken');
+//
+//   if (!tokenType || !accessToken) {
+//     throw new Error('Authorization token is missing');
+//   }
+//
+//   try {
+//     const response = await axios.get(`${process.env.REACT_APP_API_URL}/portfolio/${portfolioId}/total-value`, {
+//       headers: {
+//         'Authorization': `${tokenType} ${accessToken}`,
+//         'Content-Type': 'application/json',
+//       },
+//     });
+//
+//     if (response.status !== 200) {
+//       throw new Error('Failed to fetch total values');
+//     }
+//
+//     return response.data;
+//   } catch (error) {
+//     console.error('Error fetching total values:', error);
+//     throw error;
+//   }
+// };
+
+// export const fetchPortfolioPredictions = async (portfolioId: string): Promise<any> => {
+//   if (!portfolioId) {
+//     throw new Error('Portfolio ID is required');
+//   }
+//
+//   const tokenType = localStorage.getItem('tokenType');
+//   const accessToken = localStorage.getItem('accessToken');
+//
+//   if (!tokenType || !accessToken) {
+//     throw new Error('Authorization token is missing');
+//   }
+//
+//   try {
+//     const response = await axios.get(`${process.env.REACT_APP_API_URL}/portfolio/${portfolioId}/lstm-predictions`, {
+//       headers: {
+//         'Authorization': `${tokenType} ${accessToken}`,
+//         'Content-Type': 'application/json',
+//       },
+//     });
+//
+//     if (response.status !== 200) {
+//       throw new Error('Failed to fetch portfolio predictions');
+//     }
+//
+//     return response.data;
+//   } catch (error) {
+//     console.error('Error fetching portfolio predictions:', error);
+//     throw error;
+//   }
+// }
+
+
+export const updateTransaction = async (transaction: TransactionDTO): Promise<TransactionResponseDTO> => {
+  const response = await axios.put(`${process.env.REACT_APP_API_URL}/transactions/${transaction.id}`, transaction);
+  return response.data;
+};
+
+export const comparePortfolioToBenchmark = async (portfolioId: string, benchmarkId: string): Promise<any> => {
   if (!portfolioId) {
     throw new Error('Portfolio ID is required');
   }
@@ -263,7 +333,37 @@ export const fetchTotalValues = async (portfolioId: string): Promise<TotalValueR
   }
 
   try {
-    const response = await axios.get(`${process.env.REACT_APP_API_URL}/portfolio/${portfolioId}/total-value`, {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/portfolio/${portfolioId}//compare`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `${tokenType} ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    console.log('Response:', response);
+    return response;
+  } catch (error) {
+    console.error('Error comparing portfolio to benchmark:', error);
+    throw error;
+  }
+}
+
+export const fetchPortfolioVsMarketData = async (portfolioId: string, benchmark: string, interval: string): Promise<any> => {
+  if (!portfolioId) {
+    throw new Error('Portfolio ID is required');
+  }
+
+  const tokenType = localStorage.getItem('tokenType');
+  const accessToken = localStorage.getItem('accessToken');
+
+  if (!tokenType || !accessToken) {
+    throw new Error('Authorization token is missing');
+  }
+
+  try {
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}/portfolio/${portfolioId}/compare`, {
+      params: { benchmark, interval },
       headers: {
         'Authorization': `${tokenType} ${accessToken}`,
         'Content-Type': 'application/json',
@@ -271,17 +371,12 @@ export const fetchTotalValues = async (portfolioId: string): Promise<TotalValueR
     });
 
     if (response.status !== 200) {
-      throw new Error('Failed to fetch total values');
+      throw new Error('Failed to fetch Portfolio vs Market data');
     }
 
     return response.data;
   } catch (error) {
-    console.error('Error fetching total values:', error);
+    console.error('Error fetching Portfolio vs Market data:', error);
     throw error;
   }
-};
-
-export const updateTransaction = async (transaction: TransactionDTO): Promise<TransactionResponseDTO> => {
-  const response = await axios.put(`${process.env.REACT_APP_API_URL}/transactions/${transaction.id}`, transaction);
-  return response.data;
-};
+}

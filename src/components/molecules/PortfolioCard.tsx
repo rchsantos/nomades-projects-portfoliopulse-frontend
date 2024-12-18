@@ -1,7 +1,7 @@
-import { Button } from '@headlessui/react';
+// import { Button } from '@headlessui/react';
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { fetchTotalValues } from '../../services/PortfolioService';
+// import { fetchTotalValues } from '../../services/PortfolioService';
 import { formatCurrency, formatPercentage } from '../../utils/format';
 
 interface PortfolioCardProps {
@@ -15,19 +15,19 @@ const PortfolioCard: React.FC<PortfolioCardProps> = ({ name, value, gain, portfo
   const [totalValue, setTotalValue] = useState<string>('');
   const [totalReturn, setTotalReturn] = useState<string>('');
 
-  useEffect(() => {
-    const loadTotalValues = async () => {
-      try {
-        const totalValues = await fetchTotalValues(portfolioId);
-        setTotalValue(formatCurrency(totalValues.total_value));
-        setTotalReturn(formatPercentage(totalValues.return_percentage));
-      } catch (error) {
-        console.error('Error loading total values:', error);
-      }
-    };
-
-    loadTotalValues();
-  }, [portfolioId]);
+  // useEffect(() => {
+  //   const loadTotalValues = async () => {
+  //     try {
+  //       const totalValues = await fetchTotalValues(portfolioId);
+  //       setTotalValue(formatCurrency(totalValues.total_value));
+  //       setTotalReturn(formatPercentage(totalValues.return_percentage));
+  //     } catch (error) {
+  //       console.error('Error loading total values:', error);
+  //     }
+  //   };
+  //
+  //   loadTotalValues();
+  // }, [portfolioId]);
 
   return (
     <div className="flex flex-col justify-betweew bg-global-color-primary rounded-lg shadow-md p-6">

@@ -5,9 +5,10 @@ import { faEllipsisVertical, faArrowLeftLong } from '@fortawesome/free-solid-svg
 import {
   fetchTransactions,
   addTransaction,
-  fetchTotalValues,
   fetchPortfolio,
-  fetchPortfolioAnlysis
+  fetchPortfolioAnlysis,
+  // fetchCurrentPrices,
+  comparePortfolioToBenchmark,
 } from "../../services/PortfolioService";
 import { Transaction } from '../../types/Transaction';
 import {
@@ -28,22 +29,50 @@ import { Portfolio } from '../../types/Portfolio';
 import { Asset } from '../../types/Asset';
 import { Holding } from "../../types/Holding";
 import { formatCurrency, formatPercentage } from '../../utils/format';
-import { fetchAllAssets } from "../../services/AssetService";
-import EditTransactionForm from "../../components/organisms/EditTransactionForm";
+import { fetchAllAssets } from '../../services/AssetService';
+import EditTransactionForm from '../../components/organisms/EditTransactionForm';
+import SymbolPredictionsChart from '../../components/organisms/SymbolPredictionsChart';
+import Select, { Option } from '../../components/atoms/Select';
+import PortfolioBenchmarkChart from '../../components/organisms/PortfolioBenchmarkChart';
+import PortfolioVsMarketChart from "../../components/organisms/PortfolioVsMarketChart";
+
+
+// Periods for the predictions
+const PERIOD_OPTIONS: Option[] = [
+  { id: '7', name: '1 Week' },
+  { id: '30', name: '1 Month' },
+  { id: '90', name: '3 Months' },
+  { id: '180', name: '6 Months' },
+  { id: '365', name: '1 Year' },
+  { id: '730', name: '2 Years' },
+  { id: '1095', name: '3 Years' },
+  { id: '1825', name: '5 Years' },
+];
 
 const PortfolioDetails: React.FC = () => {
   const { portfolioId } = useParams<{ portfolioId: string }>();
-  const [portfolio, setPortfolio] = useState<Portfolio | null>(null);
-  const [holdings, setHoldings] = useState<Holding[]>([]);
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [assets, setAssets] = useState<Asset[]>([]);
   const [activeTab, setActiveTab] = useState<string>('Holdings');
   const [loading, setLoading] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState<React.ReactNode>(null);
-  const [totalInvestment, setTotalInvestment] = useState<string>('');
-  const [totalValue, setTotalValue] = useState<string>('');
-  const [returnPercentage, setReturnPercentage] = useState<string>('');
+  
+  const [portfolio, setPortfolio] = useState<Portfolio | null>(null);
+  const [holdings, setHoldings] = useState<Holding[]>([]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [assets, setAssets] = useState<Asset[]>([]);
+
+  const [investedCapital, setInvestedCapital] = useState<number>(0);
+  const [totalCurrentValue, setTotalCurrentValue] = useState<number>(0);
+  const [totalReturn, setTotalReturn] = useState<number>(0);
+  const [returnPercentage, setReturnPercentage] = useState<string>('0%');
+  
+  const [selectedAction, setSelectedAction] = useState<Option | null>(null);
+  const [selectionPeriod, setSelectionPeriod] = useState<number>(30);
+  const [currentPrices, setCurrentPrices] = useState<Record<string, number>>({});
+
+  const [portfolioReturn, setPortfolioReturn] = useState<number>(0);
+  const [benchmarkReturn, setBenchmarkReturn] = useState<number>(0);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadPortfolio = async () => {
@@ -67,9 +96,31 @@ const PortfolioDetails: React.FC = () => {
     const loadHoldings = async () => {
       if (portfolio) {
         try {
-          const data = await fetchPortfolioAnlysis(portfolio.id ? String(portfolio.id) : '');
-          console.log('Loaded Holdings Data:', data.weights); // @todo: Remove this
-          setHoldings(data.weights);
+          const portfolioAnalysis = await fetchPortfolioAnlysis(portfolio.id ? String(portfolio.id) : '');
+          const { total_value, weights } = portfolioAnalysis;
+          console.log('Loaded Holdings Data:', weights); // @todo: Remove this
+          setHoldings(weights);
+
+          // const currentPrices = await fetchCurrentPrices(weights.map((holding: Holding) => holding.asset.symbol));
+          // console.log('Current Prices:', currentPrices);  // @todo: Remove this
+          // setCurrentPrices(currentPrices);
+          //
+          // const totalValueCurrent = weights.reduce((total, holding) => {
+          //   return total + (currentPrices[holding.asset.symbol] * holding.quantity);
+          // }, 0);
+          // console.log('Total Value Current:', totalValueCurrent);  // @todo: Remove this
+          // console.log('Total Value:', total_value);  // @todo: Remove this
+          //
+          // const totalReturnValue = totalValueCurrent - total_value;
+          // const returnPercent = total_value > 0 ? ((totalReturnValue / total_value) * 100).toFixed(2) : '0.00';
+          // console.log('Return Percent:', returnPercent);  // @todo: Remove this
+
+          setInvestedCapital(total_value);
+          // setTotalCurrentValue(totalValueCurrent);
+          // setTotalReturn(totalReturnValue);
+          // setReturnPercentage(`${returnPercent}%`);
+          setHoldings(weights);
+          
           setLoading(false);
         } catch (error) {
           console.error('Error loading holdings:', error);  // @todo: Remove this
@@ -125,24 +176,37 @@ const PortfolioDetails: React.FC = () => {
     }
   }, [portfolio]);
 
-  // useEffect(() => {
-  //   const loadTotalValues = async () => {
-  //     if (portfolio) {
-  //       try {
-  //         const totalValues = await fetchTotalValues(portfolio.id ? String(portfolio.id) : '');
-  //         setTotalInvestment(formatCurrency(totalValues.total_investment));
-  //         setTotalValue(formatCurrency(totalValues.total_value));
-  //         setReturnPercentage(formatPercentage(totalValues.return_percentage));
-  //       } catch (error) {
-  //         console.error('Error loading total values:', error);  // @todo: Remove this
-  //       }
-  //     }
-  //   };
-  //
-  //   if (portfolio) {
-  //     loadTotalValues();
-  //   }
-  // }, [portfolio]);
+  interface PortfolioCompareResponse {
+    total_value: number;
+    total_investment: number;
+    total_return: number;
+    benchmark_return: number;
+    outperforming: boolean;
+  }
+  
+  useEffect(() => {
+    const fetchComparison = async () => {
+      if (!portfolioId) return;
+
+      try {
+        setLoading(true);
+        const data: PortfolioCompareResponse = await comparePortfolioToBenchmark(
+          portfolioId,
+          '^SSMI', // Default: Swiss Market Index
+          // '1d' // Default interval: daily
+        );
+        setPortfolioReturn(data.total_return);
+        setBenchmarkReturn(data.benchmark_return);
+        setLoading(false);
+      } catch (err: any) {
+        console.error('Error fetching portfolio comparison:', err);
+        setError(err.message || 'Failed to fetch comparison');
+        setLoading(false);
+      }
+    };
+
+    fetchComparison();
+  }, [portfolioId]);
 
   const handleTransactionAdded = async (newTransactionDTO: TransactionDTO) => {
     if (!portfolio) {
@@ -188,6 +252,14 @@ const PortfolioDetails: React.FC = () => {
     }
   }
 
+  const handleActionSelection = (action: Option) => {
+    setSelectedAction(action);
+  };
+
+  const handlePeriodSelection = (period: Option) => {
+    setSelectionPeriod(Number(period.id));
+  };
+
   if (loading) {
     return <LoadingSpinner />;
   }
@@ -197,16 +269,16 @@ const PortfolioDetails: React.FC = () => {
   }
 
   return (
-    <div className='container mx-auto px-4 py-6'>
-      <header className='flex justify-between items-center mb-8'>
-        <h1 className='text-3xl font-bold text-dark-gunmetal'>
+    <div className="container mx-auto px-4 py-6">
+      <header className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold text-dark-gunmetal">
           {portfolio?.name}
         </h1>
-        <div className='flex flex-row justify-between items-center text-global-color-secondary hover:underline'>
+        <div className="flex flex-row justify-between items-center text-global-color-secondary hover:underline">
           <FontAwesomeIcon icon={faArrowLeftLong} />
           <Link
-            to='/portfolio'
-            className='ml-2'
+            to="/portfolio"
+            className="ml-2"
           >
             Back to Portfolios
           </Link>
@@ -215,7 +287,7 @@ const PortfolioDetails: React.FC = () => {
 
       <Tabs>
         <TabsHeader>
-          {['Holdings', 'Analysis', 'Dividends', 'Insights', 'Watchlists', 'Screeners', 'AI Analysis Portfolio'].map((tab) => (
+          {["Holdings", "Analysis", "Dividends", "Insights", "Watchlists", "Screeners", "AI Analysis Portfolio"].map((tab) => (
             <Tab
               key={tab}
               title={tab}
@@ -226,104 +298,136 @@ const PortfolioDetails: React.FC = () => {
         </TabsHeader>
 
         <TabsBody>
-          <TabPanel active={activeTab === 'Holdings'}>
+          <TabPanel active={activeTab === "Holdings"}>
             <section className="mb-16">
               <h2 className="text-3xl font-semibold mb-8 mt-6">
                 Portfolio Overview
               </h2>
-                <div className='grid grid-cols-3'>
-                <div className='flex flex-col mb-4'>
-                  <span className='text-2xl text-dark-gunmetal font-black'>
-                    {totalInvestment}
+              <div className="grid grid-cols-3">
+                <div className="flex flex-col mb-4">
+                  <span className="text-2xl text-dark-gunmetal font-black">
+                    {Intl.NumberFormat("de-CH", { style: "currency", currency: "CHF" }).format(investedCapital)}
                   </span>
-                  <span className='font-semibold text-gray-600'>
+                  <span className="font-semibold text-gray-600">
                   Invested Capital
                   </span>
                 </div>
-                <div className='flex flex-col mb-4'>
-                  <span className='text-2xl text-dark-gunmetal font-black'>
-                    {totalValue}
+                <div className="flex flex-col mb-4">
+                  <span
+                    className={`text-${totalReturn >= 0 ? "global-color-secondary" : "ruby-red"} text-2xl font-black`}>
+                    {Intl.NumberFormat("de-CH", {
+                      style: "currency",
+                      currency: "CHF"
+                    }).format(totalReturn)} ({returnPercentage})
                   </span>
-                  <span className='font-semibold text-gray-600'>
-                    Total Return
-                  </span>
-                </div>
-                <div className='flex flex-col mb-4'>
-                  <span className={`text-${returnPercentage.startsWith('+') ? 'global-color-secondary' : 'ruby-red'} text-2xl font-black`}>
-                    {returnPercentage}
-                  </span>
-                  <span className='font-semibold text-gray-600'>
+                  <span className="font-semibold text-gray-600">
                   Return
-                  {/*  */}
+                    {/*  */}
                   </span>
                 </div>
               </div>
-              
+
             </section>
 
             <section className="mb-8">
-              <header className='flex justify-between'>
+              <header className="flex justify-between">
                 <div className="flex justify-start items-center mb-4">
                   <h2 className="text-2xl font-semibold">Holdings</h2>
                   <div className="bg-global-color-primary text-dark-gunmetal rounded-full ml-4 px-3 py-1">
-                    {assets ? assets.length : 0}
+                    {holdings ? holdings.length : 0}
                   </div>
                 </div>
                 <Button
-                  type='button'
-                  label='Add Transaction'
+                  type="button"
+                  label="Add Transaction"
                   onClick={() => {
                     setModalContent(
                       <AddTransactionForm
                         onTransactionAdded={handleTransactionAdded}
                         onClosed={() => setIsModalOpen(false)}
-                        portfolioId={portfolio.id ? String(portfolio.id) : ''}
-                        />
+                        portfolioId={portfolio.id ? String(portfolio.id) : ""}
+                      />
                     );
                     setIsModalOpen(true);
                   }}
                 />
               </header>
-              
+
               <HoldingTable
                 holdings={holdings}
               />
             </section>
-            
+
             <section>
               <h2 className="text-2xl font-semibold mb-4">Transactions</h2>
-              <TransactionsTable 
+              <TransactionsTable
                 transactions={transactions}
-                onEdit={handleEditTransaction} 
+                onEdit={handleEditTransaction}
               />
               <GenericModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 onOpen={() => setIsModalOpen(true)}
-                title='Add Transaction'
+                title="Add Transaction"
               >
                 {modalContent}
               </GenericModal>
             </section>
           </TabPanel>
 
-          <TabPanel active={activeTab === 'Analysis'}>
-            <h2 className="text-2xl font-semibold mb-4 text-gray-500">
-              Analysis Coming Soon 🚀
-            </h2>
+          <TabPanel active={activeTab === "Analysis"}>
+            {/*<h2 className="text-2xl font-semibold mb-4 text-gray-500">*/}
+            {/*  Analysis Coming Soon 🚀*/}
+            {/*</h2>*/}
+            <div className="flex flex-col items-left space-x-4 mb-4">
+              <h1 className="text-2xl font-bold mb-4">Portfolio vs Benchmark</h1>
+              
+              {portfolioId && (
+                <PortfolioVsMarketChart
+                  portfolioId={portfolioId}
+                />
+              )}
+              
+            </div>
+
+            <div className="flex items-center space-x-4 mb-4">
+              <Select
+                headerLabel="Select an Action"
+                options={holdings.map((holding) => ({
+                  id: holding.asset.symbol,
+                            name: holding.asset.symbol
+                          }))}
+                          value={selectedAction}
+                          onChange={handleActionSelection}
+                          className="w-1/3"
+                        />
+                        <Select
+                          headerLabel="Select a Period"
+                          options={PERIOD_OPTIONS}
+                          value={PERIOD_OPTIONS.find((opt) => Number(opt.id) === selectionPeriod) || null}
+                          onChange={handlePeriodSelection}
+                          className="w-1/3"
+                        />
+                      </div>
+                      {selectedAction && (
+                        <SymbolPredictionsChart
+                          selectedAction={selectedAction.id}
+                          selectionPeriod={selectionPeriod}
+                        />
+                      )}
           </TabPanel>
 
-          <TabPanel active={activeTab === 'Dividends'}>
+          <TabPanel active={activeTab === "Dividends"}>
             <h2 className="text-2xl font-semibold mb-4 text-gray-500">
               Dividends Coming Soon 🚀
             </h2>
           </TabPanel>
-          <TabPanel active={activeTab === 'Insights'}>
+          <TabPanel active={activeTab === "Insights"}>
             <h2 className="text-2xl font-semibold mb-4 text-gray-500">
               Insights Coming Soon 🚀
             </h2>
           </TabPanel>
-          <TabPanel active={activeTab === 'Watchlists'}>
+          <TabPanel active={activeTab === "Watchlists"}>
             <h2 className="text-2xl font-semibold mb-4 text-gray-500">
               Watchlists Coming Soon 🚀
             </h2>
