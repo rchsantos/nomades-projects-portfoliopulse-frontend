@@ -252,12 +252,16 @@ const PortfolioDetails: React.FC = () => {
     }
   }
 
-  const handleActionSelection = (action: Option) => {
-    setSelectedAction(action);
+  const handleActionSelection = (value: Option | Option[]) => {
+    if (!Array.isArray(value)) {
+      setSelectedAction(value);
+    }
   };
 
-  const handlePeriodSelection = (period: Option) => {
-    setSelectionPeriod(Number(period.id));
+  const handlePeriodSelection = (value: Option | Option[]) => {
+    if (!Array.isArray(value)) {
+      setSelectionPeriod(Number(value.id));
+    }
   };
 
   if (loading) {
@@ -395,26 +399,26 @@ const PortfolioDetails: React.FC = () => {
                 headerLabel="Select an Action"
                 options={holdings.map((holding) => ({
                   id: holding.asset.symbol,
-                            name: holding.asset.symbol
-                          }))}
-                          value={selectedAction}
-                          onChange={handleActionSelection}
-                          className="w-1/3"
-                        />
-                        <Select
-                          headerLabel="Select a Period"
-                          options={PERIOD_OPTIONS}
-                          value={PERIOD_OPTIONS.find((opt) => Number(opt.id) === selectionPeriod) || null}
-                          onChange={handlePeriodSelection}
-                          className="w-1/3"
-                        />
-                      </div>
-                      {selectedAction && (
-                        <SymbolPredictionsChart
-                          selectedAction={selectedAction.id}
-                          selectionPeriod={selectionPeriod}
-                        />
-                      )}
+                  name: holding.asset.symbol
+                }))}
+                value={selectedAction}
+                onChange={handleActionSelection}
+                className="w-1/3"
+              />
+              <Select
+                headerLabel="Select a Period"
+                options={PERIOD_OPTIONS}
+                value={PERIOD_OPTIONS.find((opt) => Number(opt.id) === selectionPeriod) || null}
+                onChange={handlePeriodSelection}
+                className="w-1/3"
+              />
+            </div>
+            {selectedAction && (
+              <SymbolPredictionsChart
+                selectedAction={selectedAction.id}
+                selectionPeriod={selectionPeriod}
+              />
+            )}
           </TabPanel>
 
           <TabPanel active={activeTab === "Dividends"}>

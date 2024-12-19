@@ -380,3 +380,20 @@ export const fetchPortfolioVsMarketData = async (portfolioId: string, benchmark:
     throw error;
   }
 }
+
+export const fetchBacktestData = async (initialAmount: number, years: number, indices: string[]): Promise<any> => {
+  try {
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}/backtest`, {
+      params: {
+        initial_amount: initialAmount,
+        years: years,
+        indices: indices,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching backtest data:', error);
+    throw error;
+  }
+}

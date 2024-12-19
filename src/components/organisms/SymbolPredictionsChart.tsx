@@ -75,12 +75,13 @@ const SymbolPredictionsChart: React.FC<SymbolPredictionsChartProps> = ({
       y: predictions.predicatedPrices,
       type: 'scatter',
       mode: 'lines+markers',
+      marker: { color: '#ab63fa' },
       name: selectedAction,
     },
   ];
 
   return (
-    <div className="w-full mb-16">
+    <div className="w-full mb-16 flex flex-col items-left">
       <h2 className="text-2xl font-semibold mb-4">
         Predictions for {selectedAction} - Next {selectionPeriod} Days
       </h2>
@@ -92,6 +93,7 @@ const SymbolPredictionsChart: React.FC<SymbolPredictionsChartProps> = ({
           yaxis: { title: 'Predicted Price (USD)', type: 'linear' },
           autosize: true,
         }}
+        style={{ width: '100%', height: '500px' }}
         config={{ responsive: true }}
       />
     </div>

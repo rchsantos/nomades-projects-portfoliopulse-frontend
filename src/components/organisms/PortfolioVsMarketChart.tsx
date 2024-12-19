@@ -22,7 +22,6 @@ const PortfolioVsMarketChart: React.FC<PortfolioVsMarketProps> = ({ portfolioId 
     { id: '^DJI', name: 'Dow Jones Industrial Average' },
     { id: 'N100', name: 'Euronext 100' },
     { id: '^GSPC', name: 'S&P 500' },
-    { id: '^FTSE', name: 'FTSE 100' },
   ];
 
   const INTERVAL_OPTIONS: Option[] = [
@@ -38,6 +37,7 @@ const PortfolioVsMarketChart: React.FC<PortfolioVsMarketProps> = ({ portfolioId 
       try {
         setLoading(true);
         const response = await fetchPortfolioVsMarketData(portfolioId, benchmark, interval);
+        console.log('Response', response);
         setChartData(response);
         setError(null);
       } catch (err: any) {
@@ -64,6 +64,17 @@ const PortfolioVsMarketChart: React.FC<PortfolioVsMarketProps> = ({ portfolioId 
 
   const { historical_data, total_return, benchmark_return, outperforming } = chartData || {};
   const { dates, portfolio_values, benchmark_values } = historical_data || {};
+  
+  console.log('Chart Data', chartData);
+  console.log('Dates', dates);
+  console.log('Portfolio Values', portfolio_values);
+  console.log('Benchmark Values', benchmark_values);
+
+  console.error('Mismatched data lengths:', {
+    dates: dates.length,
+    portfolio_values: portfolio_values.length,
+    benchmark_values: benchmark_values.length,
+  });
 
   return (
     <div className="w-full mb-16 flex flex-col items-left">
@@ -72,13 +83,21 @@ const PortfolioVsMarketChart: React.FC<PortfolioVsMarketProps> = ({ portfolioId 
           headerLabel="Select a Benchmark"
           options={BENCHMARK_OPTIONS}
           value={BENCHMARK_OPTIONS.find(opt => opt.id === benchmark) ?? null}
-          onChange={(selected) => setBenchmark(selected.id)}
+          onChange={(selected) => {
+            if (!Array.isArray(selected)) {
+              setBenchmark(selected.id);
+            }
+          }}
         />
         <Select
           headerLabel="Select an Interval"
           options={INTERVAL_OPTIONS}
           value={INTERVAL_OPTIONS.find(opt => opt.id === interval) ?? null}
-          onChange={(selected) => setInterval(selected.id)}
+          onChange={(selected) => {
+            if (!Array.isArray(selected)) {
+              setInterval(selected.id);
+            }
+          }}
         />
       </div>
 
@@ -103,7 +122,7 @@ const PortfolioVsMarketChart: React.FC<PortfolioVsMarketProps> = ({ portfolioId 
             y: portfolio_values, // Y-axis: Portfolio values
             type: 'scatter',
             mode: 'lines+markers',
-            marker: { color: 'blue' },
+            marker: { color: '#ab63fa' },
             name: 'Portfolio',
             yaxis: 'y1', // Utilise le premier axe Y
           },
@@ -112,28 +131,19 @@ const PortfolioVsMarketChart: React.FC<PortfolioVsMarketProps> = ({ portfolioId 
             y: benchmark_values, // Y-axis: Benchmark values
             type: 'scatter',
             mode: 'lines+markers',
-            marker: { color: 'green' },
+            marker: { color: '#19d3f3' },
             name: benchmark,
             yaxis: 'y2', // Utilise le second axe Y
           },
         ]}
         layout={{
-          title: `Portfolio vs ${benchmark} (${interval})`,
+          title: 'Portfolio vs Market',
           xaxis: { title: 'Date' },
-          yaxis: {
-            title: 'Portfolio Value',
-            side: 'left',
-            showgrid: false, // Grille désactivée pour l'axe 1
-          },
-          yaxis2: {
-            title: 'Benchmark Value',
-            side: 'right',
-            overlaying: 'y', // Superpose cet axe avec l'axe principal
-            showgrid: false, // Grille désactivée pour l'axe 2
-          },
-          showlegend: true, // Afficher la légende
+          yaxis: { title: 'Portfolio Value', overlaying: 'free', side: 'left' },
+          yaxis2: { title: 'Benchmark Value', overlaying: 'y', side: 'right' },
         }}
         style={{ width: '100%', height: '500px' }}
+        config={{ responsive: true }}
       />
     </div>
   );
