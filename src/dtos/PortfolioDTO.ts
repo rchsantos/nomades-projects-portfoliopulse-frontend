@@ -23,13 +23,6 @@ export interface PortfolioResponseDTO {
     id: string;
     symbol: string;
     name: string;
-    shares: number; // Add the shares property
-    purchase_price: number;
-    currency: string;
-    portfolio_id: string;
-    user_id: string;
-    logo: string;
-    allocation: number; 
   }>;
   totalValue: number;
   totalReturn: number;

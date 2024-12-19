@@ -1,6 +1,7 @@
+// import { Button } from '@headlessui/react';
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { fetchTotalValues } from '../../services/PortfolioService';
+// import { fetchTotalValues } from '../../services/PortfolioService';
 import { formatCurrency, formatPercentage } from '../../utils/format';
 
 interface PortfolioCardProps {
@@ -14,22 +15,22 @@ const PortfolioCard: React.FC<PortfolioCardProps> = ({ name, value, gain, portfo
   const [totalValue, setTotalValue] = useState<string>('');
   const [totalReturn, setTotalReturn] = useState<string>('');
 
-  useEffect(() => {
-    const loadTotalValues = async () => {
-      try {
-        const totalValues = await fetchTotalValues(portfolioId);
-        setTotalValue(formatCurrency(totalValues.total_value));
-        setTotalReturn(formatPercentage(totalValues.return_percentage));
-      } catch (error) {
-        console.error('Error loading total values:', error);
-      }
-    };
-
-    loadTotalValues();
-  }, [portfolioId]);
+  // useEffect(() => {
+  //   const loadTotalValues = async () => {
+  //     try {
+  //       const totalValues = await fetchTotalValues(portfolioId);
+  //       setTotalValue(formatCurrency(totalValues.total_value));
+  //       setTotalReturn(formatPercentage(totalValues.return_percentage));
+  //     } catch (error) {
+  //       console.error('Error loading total values:', error);
+  //     }
+  //   };
+  //
+  //   loadTotalValues();
+  // }, [portfolioId]);
 
   return (
-    <div className="flex flex-col justify-betweew bg-white rounded-lg shadow-md p-6">
+    <div className="flex flex-col justify-betweew bg-global-color-primary rounded-lg shadow-md p-6">
       <h2 className='pb-2 text-dark-gunmetal font-extrabold'>
         {name}
       </h2>
@@ -39,14 +40,13 @@ const PortfolioCard: React.FC<PortfolioCardProps> = ({ name, value, gain, portfo
       </p>
       <p> Gain :   
         <span 
-          className={`text-${totalReturn.startsWith('+') ? 'global-color-secondary' : 'danger'} text-1xl font-semibold mb-4 ml-3`} >
+          className={`text-${totalReturn.startsWith('+') ? 'global-color-secondary' : 'ruby-red'} text-1xl font-semibold mb-4 ml-3`} >
          {totalReturn}
         </span>
       </p>
-
       <Link 
         to={`/portfolio/${portfolioId}`}
-        className='text-global-color-secondary pt-4 text-right hover:text-global-color-primary'
+        className='text-global-color-secondary pt-4 text-right font-semibold'
       >
         View Details
       </Link>

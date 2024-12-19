@@ -4,54 +4,60 @@ import { TransactionResponseDTO } from '../dtos/TransactionDTO';
 import { Transaction } from '../types/Transaction';
 
 export class TransactionMapper {
+
   static toTransaction(transactionResponseDTO: TransactionResponseDTO): Transaction {
     return {
       id: transactionResponseDTO.id,
-      date: moment(transactionResponseDTO.date, 'DD-MM-YYYY').toDate(),
+      createdAt: moment(transactionResponseDTO.created_at).format('DD-MM-YYYY'),
       name: transactionResponseDTO.name ?? '',
       symbol: transactionResponseDTO.symbol,
       shares: transactionResponseDTO.shares,
-      price: transactionResponseDTO.price,
-      operation: transactionResponseDTO.operation,
+      pricePerShare: transactionResponseDTO.price_per_share,
+      operation: transactionResponseDTO.transaction_type,
       currency: transactionResponseDTO.currency,
-      fee_tax: transactionResponseDTO.fee_tax,
+      feeTax: transactionResponseDTO.fee_tax,
       note: transactionResponseDTO.notes ?? '',
       portfolioId: transactionResponseDTO.portfolio_id,
       userId: transactionResponseDTO.user_id,
       assetId: transactionResponseDTO.asset_id,
+      totalValue: transactionResponseDTO.total_value,
     };
   }
 
   static toTransactionResponseDTO(transaction: Transaction): TransactionResponseDTO {
     return {
+      total_value: transaction.totalValue,
       id: transaction.id,
       symbol: transaction.symbol,
-      operation: transaction.operation,
+      transaction_type: transaction.operation,
       shares: transaction.shares,
-      price: transaction.price,
+      price_per_share: transaction.pricePerShare,
       currency: transaction.currency,
-      date: moment(transaction.date, 'DD-MM-YYYY').toDate(),
+      created_at: moment(transaction.createdAt).toDate(),
       portfolio_id: transaction.portfolioId,
       user_id: transaction.userId,
       asset_id: transaction.assetId,
-      fee_tax: transaction.fee_tax,
-      notes: transaction.note, 
-      name: transaction.name,
+      fee_tax: transaction.feeTax,
+      notes: transaction.note,
+      name: transaction.name
     };
   }
 
   static toTransactionDTO(transaction: Transaction): TransactionDTO {
     return {
+      id: transaction.id,
+      totalValue: transaction.totalValue,
       operation: transaction.operation,
       name: transaction.name,
       symbol: transaction.symbol,
-      date: moment(transaction.date, 'DD-MM-YYYY').toDate().toDateString(),
+      createdAt: transaction.createdAt,
       shares: transaction.shares,
-      price: transaction.price,
+      pricePerShare: transaction.pricePerShare,
       currency: transaction.currency,
-      fee_tax: transaction.fee_tax,
+      feeTax: transaction.feeTax,
       note: transaction.note,
-      portfolio_id: transaction.portfolioId,
+      portfolio_id: transaction.portfolioId
     };
   }
+  
 }

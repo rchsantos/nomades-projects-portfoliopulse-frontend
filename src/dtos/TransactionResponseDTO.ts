@@ -1,6 +1,6 @@
-export interface Transaction {
+export interface TransactionResponseDTO {
   id: string;
-  createdAt: string;
+  createdAt: Date;
   name: string;
   symbol: string;
   shares: number;
